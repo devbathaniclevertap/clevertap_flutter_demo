@@ -1,4 +1,4 @@
-package com.example.flutter_clevertap_demo
+package com.clevertap.demo
 
 import io.flutter.embedding.android.FlutterActivity
 

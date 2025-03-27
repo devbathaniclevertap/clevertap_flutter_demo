@@ -3,10 +3,11 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.google.gms.google-services") // Add this for Firebase
 }
 
 android {
-    namespace = "com.example.flutter_clevertap_demo"
+    namespace = "com.clevertap.demo"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -21,7 +22,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.flutter_clevertap_demo"
+        applicationId = "com.clevertap.demo"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -38,6 +39,32 @@ android {
         }
     }
 }
+
+dependencies {
+    // Firebase Messaging
+    implementation("com.google.firebase:firebase-messaging:21.0.0")
+    implementation(platform("com.google.firebase:firebase-bom:33.11.0"))
+
+    // AndroidX Core and Fragment
+    implementation("androidx.core:core:1.3.0")
+    implementation("androidx.fragment:fragment:1.3.6")
+
+    // MANDATORY for App Inbox
+    implementation("androidx.appcompat:appcompat:1.3.1")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation("androidx.viewpager:viewpager:1.0.0")
+    implementation("com.google.android.material:material:1.4.0")
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+
+    // CleverTap Install Referrer (Required for CleverTap SDK v3.6.4+)
+    implementation("com.android.installreferrer:installreferrer:2.2")
+
+    // Optional AndroidX Media3 Libraries for Audio/Video Inbox Messages
+    implementation("androidx.media3:media3-exoplayer:1.1.1")
+    implementation("androidx.media3:media3-exoplayer-hls:1.1.1")
+    implementation("androidx.media3:media3-ui:1.1.1")
+}
+
 
 flutter {
     source = "../.."

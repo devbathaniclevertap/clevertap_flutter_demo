@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1040267910372",
+    "project_id": "flutter-clevertap-demo",
+    "storage_bucket": "flutter-clevertap-demo.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1040267910372:android:50b4d9fda190636c00a0f1",
+        "android_client_info": {
+          "package_name": "com.clevertap.demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9A5sgvdlE4yyi8pQHNx_3JHUzb20uxIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
