@@ -13,9 +13,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final _cleverTapPlugin = CleverTapPlugin();
   @override
   void initState() {
-    CleverTapPlugin.setDebugLevel(1);
+    CleverTapPlugin.setDebugLevel(3);
+    _cleverTapPlugin.setCleverTapPushClickedPayloadReceivedHandler(
+      Provider.of<HomeProvider>(
+        context,
+        listen: false,
+      ).pushClickedPayloadReceived,
+    );
     super.initState();
   }
 
@@ -97,6 +104,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         hintText: "abc@123",
                         controller: homeState.identityController,
                       ),
+                      SizedBox(height: 16),
+                      Text(
+                        "Enter Stuff",
+                        style: TextStyle(color: Colors.black, fontSize: 14),
+                      ),
+                      SizedBox(height: 4),
+                      CommonTextfield(
+                        hintText: "data",
+                        controller: homeState.stuffController,
+                      ),
                     ],
                   ),
                   SizedBox(height: 24),
@@ -116,6 +133,47 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                   SizedBox(height: 60),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CommonBoxshadowContainer(
+                          onTap: () {
+                            homeState.addStuff();
+                          },
+                          color: Color(0xff6EC6A9),
+                          child: Center(
+                            child: Text(
+                              "Add stuff",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: CommonBoxshadowContainer(
+                          onTap: () {
+                            homeState.clearStuff();
+                          },
+                          color: Color(0xff6EC6A9),
+                          child: Center(
+                            child: Text(
+                              "Clear stuff",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 60),
                   CommonBoxshadowContainer(
                     onTap: () {
                       if (homeState.selectedAction == "onUserLogin") {
@@ -124,6 +182,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         homeState.profilePush();
                       } else if (homeState.selectedAction == "recordEvent") {
                         homeState.recordEvent();
+                      } else if (homeState.selectedAction == "profileSet") {
+                        homeState.profileSet();
+                      } else if (homeState.selectedAction == "getCleverTapId") {
+                        homeState.getCleverTapId();
+                      } else if (homeState.selectedAction == "setLocation") {
+                        homeState.setLocation();
+                      } else if (homeState.selectedAction ==
+                          "createPushNotification") {
+                        homeState.createPushNotification();
+                      } else if (homeState.selectedAction ==
+                          "getNotificationPermission") {
+                        homeState.getNotificationPermission();
                       }
                     },
                     color: Color(0xff6EC6A9),
