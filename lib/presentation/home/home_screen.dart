@@ -16,13 +16,14 @@ class _HomeScreenState extends State<HomeScreen> {
   final _cleverTapPlugin = CleverTapPlugin();
   @override
   void initState() {
-    CleverTapPlugin.setDebugLevel(3);
+    CleverTapPlugin.setDebugLevel(2);
     _cleverTapPlugin.setCleverTapPushClickedPayloadReceivedHandler(
-      Provider.of<HomeProvider>(
-        context,
-        listen: false,
-      ).pushClickedPayloadReceived,
+      context.read<HomeProvider>().pushClickedPayloadReceived,
     );
+    _cleverTapPlugin.setCleverTapDisplayUnitsLoadedHandler(
+      context.read<HomeProvider>().onDisplayUnitsLoaded,
+    );
+    context.read<HomeProvider>().getAdUnits();
     super.initState();
   }
 

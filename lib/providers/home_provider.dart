@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_clevertap_demo/models/native_display_entity.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class HomeProvider with ChangeNotifier {
@@ -144,5 +146,19 @@ class HomeProvider with ChangeNotifier {
     if (!status.isGranted) {
       await Permission.notification.request();
     }
+  }
+
+  void onDisplayUnitsLoaded(List<dynamic>? displayUnits) {
+    print("Display Units = $displayUnits");
+  }
+
+  List<NativeDisplayEntity>? nativeDisplayEntity;
+
+  void getAdUnits() async {
+    final displayUnits = await CleverTapPlugin.getAllDisplayUnits();
+    final data = jsonEncode(displayUnits);
+    print("Display Units Payload = $data");
+    nativeDisplayEntity = nativeDisplayEntityFromJson(data);
+    notifyListeners();
   }
 }
