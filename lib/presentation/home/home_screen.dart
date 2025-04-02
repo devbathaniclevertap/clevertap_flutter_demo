@@ -69,9 +69,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Enter name",
-                        style: TextStyle(color: Colors.black, fontSize: 14),
+                      Semantics(
+                        label: "profile_image",
+                        child: Text(
+                          "Enter name",
+                          style: TextStyle(color: Colors.black, fontSize: 14),
+                        ),
                       ),
                       SizedBox(height: 4),
                       CommonTextfield(
@@ -79,9 +82,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         controller: homeState.nameController,
                       ),
                       SizedBox(height: 16),
-                      Text(
-                        "Enter email",
-                        style: TextStyle(color: Colors.black, fontSize: 14),
+                      Semantics(
+                        label: "search",
+                        child: Text(
+                          "Enter email",
+                          style: TextStyle(color: Colors.black, fontSize: 14),
+                        ),
                       ),
                       SizedBox(height: 4),
                       CommonTextfield(
@@ -90,9 +96,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         textInputType: TextInputType.emailAddress,
                       ),
                       SizedBox(height: 16),
-                      Text(
-                        "Enter phone number",
-                        style: TextStyle(color: Colors.black, fontSize: 14),
+                      Semantics(
+                        label: "cart",
+                        child: Text(
+                          "Enter phone number",
+                          style: TextStyle(color: Colors.black, fontSize: 14),
+                        ),
                       ),
                       SizedBox(height: 4),
                       CommonTextfield(
@@ -101,9 +110,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         textInputType: TextInputType.phone,
                       ),
                       SizedBox(height: 16),
-                      Text(
-                        "Enter identity",
-                        style: TextStyle(color: Colors.black, fontSize: 14),
+                      Semantics(
+                        label: ("support_help"),
+                        child: Text(
+                          "Enter identity",
+                          style: TextStyle(color: Colors.black, fontSize: 14),
+                        ),
                       ),
                       SizedBox(height: 4),
                       CommonTextfield(
@@ -111,9 +123,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         controller: homeState.identityController,
                       ),
                       SizedBox(height: 16),
-                      Text(
-                        "Enter Stuff",
-                        style: TextStyle(color: Colors.black, fontSize: 14),
+                      Semantics(
+                        label: "settings",
+                        child: Text(
+                          "Enter Stuff",
+
+                          style: TextStyle(color: Colors.black, fontSize: 14),
+                        ),
                       ),
                       SizedBox(height: 4),
                       CommonTextfield(

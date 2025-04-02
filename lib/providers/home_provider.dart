@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clevertap_demo/models/native_display_entity.dart';
+import 'package:flutter_clevertap_demo/services/native_bridge.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class HomeProvider with ChangeNotifier {
@@ -89,7 +90,7 @@ class HomeProvider with ChangeNotifier {
 
   //recordEvent
   void recordEvent() {
-    CleverTapPlugin.recordEvent("Product Viewed", {"product_name": "Vada pav"});
+    CleverTapPlugin.recordEvent("CoachmarksND", {"product_name": "Vada pav"});
   }
 
   //setLocation
@@ -159,7 +160,7 @@ class HomeProvider with ChangeNotifier {
     final displayUnits = await CleverTapPlugin.getAllDisplayUnits();
     final data = jsonEncode(displayUnits);
     log("Display Units Payload = $data");
-    nativeDisplayEntity = nativeDisplayEntityFromJson(data);
+    showCoachMarks(data);
     notifyListeners();
   }
 
@@ -182,5 +183,10 @@ class HomeProvider with ChangeNotifier {
   void getAppBoxData() async {
     final messages = await CleverTapPlugin.getAllInboxMessages();
     log("Message : $messages");
+  }
+
+  Future<void> showCoachMarks(String data) async {
+    String response = await NativeBridge.showCoachMarks(data);
+    log("Coach Marks Response: $response");
   }
 }

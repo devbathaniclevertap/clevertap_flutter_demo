@@ -23,3 +23,5 @@ plugins {
 }
 
 include(":app")
+include(":CT-Templates") 
+project(":CT-Templates").projectDir = file("CT-Templates")

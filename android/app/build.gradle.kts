@@ -25,7 +25,7 @@ android {
         applicationId = "com.clevertap.demo"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        minSdk = 24
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -48,7 +48,8 @@ dependencies {
     // AndroidX Core and Fragment
     implementation("androidx.core:core:1.3.0")
     implementation("androidx.fragment:fragment:1.3.6")
-
+    implementation("com.clevertap.android:clevertap-android-sdk:7.0.2")
+    implementation("com.clevertap.android:push-templates:1.1.0")
     // MANDATORY for App Inbox
     implementation("androidx.appcompat:appcompat:1.3.1")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
@@ -63,6 +64,7 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:1.1.1")
     implementation("androidx.media3:media3-exoplayer-hls:1.1.1")
     implementation("androidx.media3:media3-ui:1.1.1")
+    implementation(project(":CT-Templates"))
 }
 
 
