@@ -23,6 +23,8 @@ class HomeProvider with ChangeNotifier {
     "setLocation",
     "createPushNotification",
     "getNotificationPermission",
+    "getAppBoxData",
+    "inboxDidInitialize",
   ];
 
   List<String> stuff = [];
@@ -120,24 +122,23 @@ class HomeProvider with ChangeNotifier {
   }
 
   void pushClickedPayloadReceived(Map<String, dynamic> notificationPayload) {
-    print(
+    log(
       "pushClickedPayloadReceived called with notification payload: $notificationPayload",
     );
     // You may perform UI operation like redirecting the user to a specific page based on custom key-value pairs
     // passed in the notificationPayload. You may also perform non UI operation such as HTTP requests, IO with local storage etc.
-    print(notificationPayload);
   }
 
   void getNotificationPermission() async {
     bool? isPushPermissionEnabled =
         await CleverTapPlugin.getPushNotificationPermissionStatus();
-    print(isPushPermissionEnabled);
+    log(isPushPermissionEnabled.toString());
     if (isPushPermissionEnabled == null) return;
 
     if (!isPushPermissionEnabled) {
       requestNotificationPermission();
     } else {
-      print("Push Permission is already enabled.");
+      log("Push Permission is already enabled.");
     }
   }
 
@@ -149,7 +150,7 @@ class HomeProvider with ChangeNotifier {
   }
 
   void onDisplayUnitsLoaded(List<dynamic>? displayUnits) {
-    print("Display Units = $displayUnits");
+    log("Display Units = $displayUnits");
   }
 
   List<NativeDisplayEntity>? nativeDisplayEntity;
@@ -157,8 +158,29 @@ class HomeProvider with ChangeNotifier {
   void getAdUnits() async {
     final displayUnits = await CleverTapPlugin.getAllDisplayUnits();
     final data = jsonEncode(displayUnits);
-    print("Display Units Payload = $data");
+    log("Display Units Payload = $data");
     nativeDisplayEntity = nativeDisplayEntityFromJson(data);
     notifyListeners();
+  }
+
+  //App Inbox
+  void inboxDidInitialize() {
+    log("inboxDidInitialize called");
+    var styleConfig = {
+      'noMessageTextColor': '#ff6600',
+      'noMessageText': 'No message(s) to show.',
+      'navBarTitle': 'App Inbox',
+    };
+    CleverTapPlugin.showInbox(styleConfig);
+    notifyListeners();
+  }
+
+  void inboxMessagesDidUpdate() {
+    log("inboxMessagesDidUpdate called");
+  }
+
+  void getAppBoxData() async {
+    final messages = await CleverTapPlugin.getAllInboxMessages();
+    log("Message : $messages");
   }
 }

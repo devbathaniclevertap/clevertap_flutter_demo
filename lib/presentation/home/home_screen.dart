@@ -17,11 +17,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     CleverTapPlugin.setDebugLevel(2);
+    CleverTapPlugin.initializeInbox();
     _cleverTapPlugin.setCleverTapPushClickedPayloadReceivedHandler(
       context.read<HomeProvider>().pushClickedPayloadReceived,
     );
     _cleverTapPlugin.setCleverTapDisplayUnitsLoadedHandler(
       context.read<HomeProvider>().onDisplayUnitsLoaded,
+    );
+
+    _cleverTapPlugin.setCleverTapInboxMessagesDidUpdateHandler(
+      context.read<HomeProvider>().inboxMessagesDidUpdate,
     );
     context.read<HomeProvider>().getAdUnits();
     super.initState();
@@ -195,6 +200,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       } else if (homeState.selectedAction ==
                           "getNotificationPermission") {
                         homeState.getNotificationPermission();
+                      } else if (homeState.selectedAction == "getAppBoxData") {
+                        homeState.getAppBoxData();
+                      } else if (homeState.selectedAction ==
+                          "inboxDidInitialize") {
+                        homeState.inboxDidInitialize();
                       }
                     },
                     color: Color(0xff6EC6A9),
