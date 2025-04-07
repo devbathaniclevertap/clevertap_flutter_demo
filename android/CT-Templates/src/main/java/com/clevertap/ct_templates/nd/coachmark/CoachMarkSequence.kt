@@ -1,6 +1,7 @@
 package com.clevertap.ct_templates.nd.coachmark
 
 import android.app.Activity
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.clevertap.ct_templates.R
@@ -98,10 +99,18 @@ class CoachMarkSequence(private val mContext: Activity) {
     fun start(rootView: ViewGroup? = null) {
         if (mSequenceQueue.size > 0) {
             val firstElement = mSequenceQueue.poll()
-            if (rootView == null) {
-                firstElement?.build(mSequenceQueue.size)?.show((mContext).window.decorView as ViewGroup)
-            } else {
-                firstElement?.build(mSequenceQueue.size)?.show(rootView)
+            val decorView = rootView ?: (mContext.window.decorView as ViewGroup)
+            
+            // Ensure we're on the main thread
+            mContext.runOnUiThread {
+                try {
+                    decorView.post {
+                        firstElement?.build(mSequenceQueue.size)?.show(decorView)
+                    }
+                } catch (e: Exception) {
+                    Log.e("CoachMarkSequence", "Error showing coach marks: ${e.message}")
+                    e.printStackTrace()
+                }
             }
         }
     }

@@ -1,17 +1,23 @@
 package com.clevertap.ct_templates.nd.coachmark
 
+import android.R
+import android.app.Activity
 import android.graphics.Color
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONException
 import org.json.JSONObject
+import kotlin.time.Duration
+
 
 class CoachMarkHelper {
 
     lateinit var coachMarkSequence: CoachMarkSequence
 
-    fun renderCoachMark(context: AppCompatActivity, unit: JSONObject, onComplete: () -> Unit) {
+    fun renderCoachMark(context: Activity, unit: JSONObject, onComplete: () -> Unit) {
         try {
             coachMarkSequence = CoachMarkSequence(context)
             coachMarkSequence.apply {
@@ -43,11 +49,14 @@ class CoachMarkHelper {
                             throw JSONException("'$viewIdKey' is missing or empty")
                         }
 
-                        val viewId = context.resources.getIdentifier(
-                            viewIdString,
-                            "id",
-                            context.packageName
-                        )
+//                        val viewId = context.resources.getIdentifier(
+//                            viewIdString,
+//                            "tagged_view",
+//                            context.packageName
+//                        )
+
+                        val viewId = resolveViewId(context, viewIdString)
+                        Log.d("CoachMarkHelper", "Resolved view ID for key " + viewIdKey + ": " + viewId);
                         if (viewId == 0) {
                             throw JSONException("Invalid view ID for '$viewIdKey': $viewIdString")
                         }
@@ -61,11 +70,25 @@ class CoachMarkHelper {
                         )
                     }
                 }
-
-                // Start the coach mark sequence
-                start(context.window?.decorView as ViewGroup)
-                setOnFinishCallback {
-                    onComplete()
+                Log.d("CoachMarkHelper","All Views Found")
+//                Toast.makeText(context, "Hello this is a testing toast", Toast.LENGTH_LONG).show()
+                
+                // Get the root view using android.R.id.content
+                val rootView = context.findViewById<ViewGroup>(android.R.id.content)
+                if (rootView != null) {
+                    context.runOnUiThread {
+                        try {
+                            start(rootView)
+                            setOnFinishCallback {
+                                onComplete()
+                            }
+                        } catch (e: Exception) {
+                            Log.e("CoachMarkHelper", "Error starting coach marks: ${e.message}")
+                            e.printStackTrace()
+                        }
+                    }
+                } else {
+                    Log.e("CoachMarkHelper", "Root view is null")
                 }
             }
         } catch (e: JSONException) {
@@ -75,12 +98,61 @@ class CoachMarkHelper {
         }
     }
 
+    fun findViewWithTestId(root: View?, testId: String): View? {
+        if (root == null) {
+            return null
+        }
+        // It correctly checks the view's contentDescription
+        if (testId == root.contentDescription) {
+            Log.d("SDK_findViewWithTestId", "Found view with contentDescription: '$testId'")
+            return root
+        }
+        // Recursively searches children
+        if (root is ViewGroup) {
+            val group = root
+            for (i in 0 until group.childCount) {
+                val childResult = findViewWithTestId(group.getChildAt(i), testId)
+                if (childResult != null) {
+                    return childResult
+                }
+            }
+        }
+        return null
+    }
+
+    // THIS FUNCTION REMAINS UNCHANGED IN THE SDK
+    fun resolveViewId(activity: Activity, testId: String?): Int {
+        // Note: Original code had testId!! - potentially unsafe if testId could be null.
+        // A safer version would check for null first, but we rely on the provided SDK code.
+        if (testId == null) {
+            Log.w("SDK_resolveViewId", "testId is null, cannot resolve.")
+            return 0
+        }
+        // It correctly finds the root view
+        val rootView = activity.findViewById<View>(R.id.content)?.rootView // Using android.R.id.content
+        if (rootView == null) {
+            Log.e("SDK_resolveViewId", "Root view is null.")
+            return 0
+        }
+        // It calls findViewWithTestId to search using contentDescription
+        Log.d("SDK_resolveViewId", "Searching for view with testId (contentDescription): '$testId'")
+        val targetView = findViewWithTestId(rootView, testId) // Calls the function above
+        // It returns the view's Android ID if found, otherwise 0
+        val foundId = targetView?.id ?: 0
+        if (foundId == 0) {
+            Log.w("SDK_resolveViewId", "View NOT found for testId '$testId'")
+        } else {
+            Log.i("SDK_resolveViewId", "View found for testId '$testId', returning ID: $foundId")
+        }
+        return foundId
+    }
+
     fun addCoachMarkItem(
         viewId: Int,
         titleKey: String,
         subTitleKey: String,
         isLastItem: Boolean = false,
-        context: AppCompatActivity,
+        context: Activity,
         customKv: JSONObject
     ) {
         try {

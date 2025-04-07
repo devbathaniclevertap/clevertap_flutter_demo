@@ -47,14 +47,13 @@ dependencies {
 
     // AndroidX Core and Fragment
     implementation("androidx.core:core:1.3.0")
-    implementation("androidx.fragment:fragment:1.3.6")
     implementation("com.clevertap.android:clevertap-android-sdk:7.0.2")
     implementation("com.clevertap.android:push-templates:1.1.0")
     // MANDATORY for App Inbox
     implementation("androidx.appcompat:appcompat:1.3.1")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("androidx.viewpager:viewpager:1.0.0")
-    implementation("com.google.android.material:material:1.4.0")
+    implementation("com.google.android.material:material:1.10.0")
     implementation("com.github.bumptech.glide:glide:4.12.0")
 
     // CleverTap Install Referrer (Required for CleverTap SDK v3.6.4+)
@@ -64,6 +63,9 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:1.1.1")
     implementation("androidx.media3:media3-exoplayer-hls:1.1.1")
     implementation("androidx.media3:media3-ui:1.1.1")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.fragment:fragment:1.3.6")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation(project(":CT-Templates"))
 }
 

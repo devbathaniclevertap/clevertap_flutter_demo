@@ -2,6 +2,7 @@ import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clevertap_demo/presentation/widgets/common_boxshadow_container.dart';
 import 'package:flutter_clevertap_demo/presentation/widgets/common_textfield.dart';
+import 'package:flutter_clevertap_demo/presentation/widgets/native_view_builder.dart';
 import 'package:flutter_clevertap_demo/providers/home_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +17,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final _cleverTapPlugin = CleverTapPlugin();
   @override
   void initState() {
-    CleverTapPlugin.setDebugLevel(2);
     CleverTapPlugin.initializeInbox();
     _cleverTapPlugin.setCleverTapPushClickedPayloadReceivedHandler(
       context.read<HomeProvider>().pushClickedPayloadReceived,
@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _cleverTapPlugin.setCleverTapInboxMessagesDidUpdateHandler(
       context.read<HomeProvider>().inboxMessagesDidUpdate,
     );
-    context.read<HomeProvider>().getAdUnits();
+
     super.initState();
   }
 
@@ -69,8 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      NativeTaggedView(tag: "profile_image"),
                       Semantics(
                         label: "profile_image",
+                        identifier: "profile_image",
                         child: Text(
                           "Enter name",
                           style: TextStyle(color: Colors.black, fontSize: 14),
@@ -82,13 +84,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         controller: homeState.nameController,
                       ),
                       SizedBox(height: 16),
-                      Semantics(
-                        label: "search",
-                        child: Text(
-                          "Enter email",
-                          style: TextStyle(color: Colors.black, fontSize: 14),
-                        ),
+                      Stack(
+                        children: [
+                          Semantics(
+                            label: "search",
+                            identifier: "search",
+                            child: Text(
+                              "Enter email",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          NativeTaggedView(tag: "search"),
+                        ],
                       ),
+
                       SizedBox(height: 4),
                       CommonTextfield(
                         hintText: "dev.bathani@clevertap.com",
@@ -96,13 +108,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         textInputType: TextInputType.emailAddress,
                       ),
                       SizedBox(height: 16),
-                      Semantics(
-                        label: "cart",
-                        child: Text(
-                          "Enter phone number",
-                          style: TextStyle(color: Colors.black, fontSize: 14),
-                        ),
+                      Stack(
+                        children: [
+                          Semantics(
+                            label: "cart",
+                            identifier: "cart",
+                            child: Text(
+                              "Enter phone number",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          NativeTaggedView(tag: "cart"),
+                        ],
                       ),
+
                       SizedBox(height: 4),
                       CommonTextfield(
                         hintText: "+91 7202897611",
@@ -110,27 +132,46 @@ class _HomeScreenState extends State<HomeScreen> {
                         textInputType: TextInputType.phone,
                       ),
                       SizedBox(height: 16),
-                      Semantics(
-                        label: ("support_help"),
-                        child: Text(
-                          "Enter identity",
-                          style: TextStyle(color: Colors.black, fontSize: 14),
-                        ),
+                      Stack(
+                        children: [
+                          Semantics(
+                            label: "support_help",
+                            identifier: "support_help",
+                            child: Text(
+                              "Enter identity",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          NativeTaggedView(tag: "support_help"),
+                        ],
                       ),
+
                       SizedBox(height: 4),
                       CommonTextfield(
                         hintText: "abc@123",
                         controller: homeState.identityController,
                       ),
                       SizedBox(height: 16),
-                      Semantics(
-                        label: "settings",
-                        child: Text(
-                          "Enter Stuff",
-
-                          style: TextStyle(color: Colors.black, fontSize: 14),
-                        ),
+                      Stack(
+                        children: [
+                          Semantics(
+                            label: "settings",
+                            identifier: "settings",
+                            child: Text(
+                              "Enter Stuff",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          NativeTaggedView(tag: "settings"),
+                        ],
                       ),
+
                       SizedBox(height: 4),
                       CommonTextfield(
                         hintText: "data",

@@ -89,8 +89,12 @@ class HomeProvider with ChangeNotifier {
   }
 
   //recordEvent
-  void recordEvent() {
-    CleverTapPlugin.recordEvent("CoachmarksND", {"product_name": "Vada pav"});
+  void recordEvent() async {
+    await CleverTapPlugin.recordEvent("CoachmarksND", {
+      "product_name": "Vada pav",
+    });
+    await Future.delayed(Duration(seconds: 2));
+    getAdUnits();
   }
 
   //setLocation
