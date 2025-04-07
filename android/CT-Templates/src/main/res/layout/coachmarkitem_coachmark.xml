@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:clickable="true"
     android:focusable="true"
+    android:id="@+id/coach_mark_root"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <View
@@ -18,6 +19,7 @@
         android:id="@+id/itemDashed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:elevation="5dp"
         android:visibility="visible"
         app:srcCompat="@drawable/img_dashed_coachmark_bottom"/>
@@ -25,11 +27,12 @@
     <RelativeLayout
         android:id="@+id/itemRoot"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginHorizontal="26dp"
         android:padding="20dp"
         android:elevation="10dp"
         android:visibility="visible"
-        android:layout_height="wrap_content"
         android:background="@drawable/bg_coach_mark" >
 
         <TextView
@@ -39,6 +42,7 @@
             android:layout_alignParentTop="true"
             android:textSize="14sp"
             android:textStyle="bold"
+            android:visibility="visible"
             android:textColor="#0d192e"/>
 
         <TextView
@@ -48,6 +52,7 @@
             android:layout_below="@id/txvTitle"
             android:layout_marginTop="4dp"
             android:textSize="14sp"
+            android:visibility="visible"
             android:textColor="#152a4c"/>
 
         <TextView
@@ -57,31 +62,41 @@
             android:layout_alignParentEnd="true"
             android:layout_marginBottom="6dp"
             android:textSize="10sp"
+            android:visibility="visible"
             tools:text="(1/5)"
             tools:ignore="SmallSp"
             android:layout_above="@id/txvSubTitle"/>
 
-        <Button
-            android:id="@+id/btnSkip"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/txvSubTitle"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="2dp"
             android:layout_marginTop="20dp"
-            android:textAllCaps="false"
-            android:text="@string/coachmarkSkip" />
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btnNext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/txvSubTitle"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="20dp"
-            android:textAllCaps="false"
-            android:text="@string/coachmarkNext" />
+            <Button
+                android:id="@+id/btnSkip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:textAllCaps="false"
+                android:visibility="visible"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:text="@string/coachmarkSkip" />
 
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btnNext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"
+                android:visibility="visible"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:text="@string/coachmarkNext" />
+        </LinearLayout>
     </RelativeLayout>
-
 </FrameLayout>

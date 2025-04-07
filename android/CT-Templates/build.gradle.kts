@@ -42,4 +42,5 @@ dependencies {
     implementation("com.google.android.material:material:1.6.1")
     implementation("de.hdodenhof:circleimageview:3.0.1")
     implementation("com.airbnb.android:lottie:3.4.0")
+
 }

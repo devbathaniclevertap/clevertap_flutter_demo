@@ -12,10 +12,9 @@
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name="com.example.flutter_clevertap_demo.MainActivity"
-            android:theme="@style/LaunchTheme"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:exported="true"
             android:launchMode="singleTop"
-            android:taskAffinity=""
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
@@ -53,7 +52,7 @@
             <!-- IMPORTANT: To force use Google AD ID to uniquely identify  users, use the following meta tag. GDPR mandates that if you are using this tag, there is prominent disclousure to your end customer in their application. Read more about GDPR here - https://clevertap.com/blog/in-preparation-of-gdpr-compliance/ -->
         <meta-data
                 android:name="CLEVERTAP_USE_GOOGLE_AD_ID"
-                android:value="0"/>
+                android:value="1"/>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

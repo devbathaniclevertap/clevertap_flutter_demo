@@ -2,22 +2,22 @@ package com.clevertap.ct_templates.nd.coachmark
 
 import android.R
 import android.app.Activity
+import android.content.Context
 import android.graphics.Color
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import org.json.JSONException
 import org.json.JSONObject
-import kotlin.time.Duration
 
 
 class CoachMarkHelper {
 
     lateinit var coachMarkSequence: CoachMarkSequence
 
-    fun renderCoachMark(context: Activity, unit: JSONObject, onComplete: () -> Unit) {
+    fun renderCoachMark(context: FragmentActivity, unit: JSONObject, onComplete: () -> Unit) {
         try {
             coachMarkSequence = CoachMarkSequence(context)
             coachMarkSequence.apply {

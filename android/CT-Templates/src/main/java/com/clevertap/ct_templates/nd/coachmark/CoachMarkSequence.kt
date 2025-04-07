@@ -4,11 +4,13 @@ import android.app.Activity
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import com.clevertap.ct_templates.R
 import com.clevertap.ct_templates.databinding.CoachmarkitemCoachmarkBinding
 import java.util.*
 
-class CoachMarkSequence(private val mContext: Activity) {
+class CoachMarkSequence(private val mContext: FragmentActivity) {
 
     private val mSequenceQueue: Queue<CoachMarkOverlay.Builder> = LinkedList()
     var mCoachMark: CoachMarkOverlay? = null
