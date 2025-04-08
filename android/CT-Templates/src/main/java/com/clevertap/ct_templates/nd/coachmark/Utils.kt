@@ -44,5 +44,6 @@ enum class Gravity {
     END_BOTTOM,
     TOP,
     BOTTOM,
+    CENTER,
     NULL
 }

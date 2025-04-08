@@ -69,14 +69,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      NativeTaggedView(tag: "profile_image"),
-                      Semantics(
-                        label: "profile_image",
-                        identifier: "profile_image",
-                        child: Text(
-                          "Enter name",
-                          style: TextStyle(color: Colors.black, fontSize: 14),
-                        ),
+                      // Name field
+                      Stack(
+                        children: [
+                          SizedBox(
+                            height: 20,
+                            width: 200,
+                            child: Text(
+                              "Enter name",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          NativeTaggedView(tag: "profile_image"),
+                        ],
                       ),
                       SizedBox(height: 4),
                       CommonTextfield(
@@ -84,11 +92,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         controller: homeState.nameController,
                       ),
                       SizedBox(height: 16),
+
+                      // Email field
                       Stack(
                         children: [
-                          Semantics(
-                            label: "search",
-                            identifier: "search",
+                          SizedBox(
+                            height: 20,
+                            width: 200,
                             child: Text(
                               "Enter email",
                               style: TextStyle(
@@ -100,7 +110,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           NativeTaggedView(tag: "search"),
                         ],
                       ),
-
                       SizedBox(height: 4),
                       CommonTextfield(
                         hintText: "dev.bathani@clevertap.com",
@@ -108,11 +117,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         textInputType: TextInputType.emailAddress,
                       ),
                       SizedBox(height: 16),
+
+                      // Phone number field
                       Stack(
                         children: [
-                          Semantics(
-                            label: "cart",
-                            identifier: "cart",
+                          SizedBox(
+                            height: 20,
+                            width: 200,
                             child: Text(
                               "Enter phone number",
                               style: TextStyle(
@@ -124,7 +135,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           NativeTaggedView(tag: "cart"),
                         ],
                       ),
-
                       SizedBox(height: 4),
                       CommonTextfield(
                         hintText: "+91 7202897611",
@@ -132,11 +142,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         textInputType: TextInputType.phone,
                       ),
                       SizedBox(height: 16),
+
+                      // Identity field
                       Stack(
                         children: [
-                          Semantics(
-                            label: "support_help",
-                            identifier: "support_help",
+                          SizedBox(
+                            height: 20,
+                            width: 200,
                             child: Text(
                               "Enter identity",
                               style: TextStyle(
@@ -148,18 +160,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           NativeTaggedView(tag: "support_help"),
                         ],
                       ),
-
                       SizedBox(height: 4),
                       CommonTextfield(
                         hintText: "abc@123",
                         controller: homeState.identityController,
                       ),
                       SizedBox(height: 16),
+
+                      // Stuff field
                       Stack(
                         children: [
-                          Semantics(
-                            label: "settings",
-                            identifier: "settings",
+                          SizedBox(
+                            height: 20,
+                            width: 200,
                             child: Text(
                               "Enter Stuff",
                               style: TextStyle(
@@ -171,7 +184,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           NativeTaggedView(tag: "settings"),
                         ],
                       ),
-
                       SizedBox(height: 4),
                       CommonTextfield(
                         hintText: "data",

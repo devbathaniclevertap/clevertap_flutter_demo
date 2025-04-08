@@ -17,7 +17,7 @@ class CoachMarkHelper {
 
     lateinit var coachMarkSequence: CoachMarkSequence
 
-    fun renderCoachMark(context: FragmentActivity, unit: JSONObject, onComplete: () -> Unit) {
+    fun renderCoachMark(context: Activity, unit: JSONObject, onComplete: () -> Unit) {
         try {
             coachMarkSequence = CoachMarkSequence(context)
             coachMarkSequence.apply {

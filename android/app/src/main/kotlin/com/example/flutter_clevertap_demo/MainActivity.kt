@@ -15,7 +15,7 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
 
-class MainActivity : FlutterFragmentActivity() {
+class MainActivity : FlutterActivity() {
     private val CHANNEL = "com.example.yourapp/method_channel"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {

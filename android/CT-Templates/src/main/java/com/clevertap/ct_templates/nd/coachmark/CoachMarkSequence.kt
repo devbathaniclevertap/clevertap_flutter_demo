@@ -10,7 +10,7 @@ import com.clevertap.ct_templates.R
 import com.clevertap.ct_templates.databinding.CoachmarkitemCoachmarkBinding
 import java.util.*
 
-class CoachMarkSequence(private val mContext: FragmentActivity) {
+class CoachMarkSequence(private val mContext: Activity) {
 
     private val mSequenceQueue: Queue<CoachMarkOverlay.Builder> = LinkedList()
     var mCoachMark: CoachMarkOverlay? = null
