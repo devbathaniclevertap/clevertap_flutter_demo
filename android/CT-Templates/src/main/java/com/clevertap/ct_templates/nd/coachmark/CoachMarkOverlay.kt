@@ -71,156 +71,122 @@ class CoachMarkOverlay : FrameLayout {
         }
     }
 
-    // master mine
     private fun drawTransparentOverlay() = mBuilder?.apply {
         mLayer?.let { layer ->
             val targetViewSize = Rect()
-            if (getOverlayTargetView() != null) {
-                getOverlayTargetView()?.getGlobalVisibleRect(targetViewSize)
-            } else {
-                targetViewSize.set(getOverlayTargetCoordinates())
-            }
-            targetViewSize.left -= getOverlayTransparentPadding().left
-            targetViewSize.top -= getOverlayTransparentPadding().top
-            targetViewSize.right += getOverlayTransparentPadding().right
-            targetViewSize.bottom += getOverlayTransparentPadding().bottom
+            val targetView = getOverlayTargetView()
+            
+            // Get both screen location and visible rect
+            val location = IntArray(2)
+            targetView?.getLocationOnScreen(location)
+            targetView?.getLocationInWindow(location)
+            
+            // Set precise target bounds
+            targetViewSize.set(
+                location[0],
+                location[1],
+                location[0] + (targetView?.width ?: 0),
+                location[1] + (targetView?.height ?: 0)
+            )
 
-            targetViewSize.left += getOverlayTransparentMargin().left
-            targetViewSize.top += getOverlayTransparentMargin().top
-            targetViewSize.right += getOverlayTransparentMargin().right
-            targetViewSize.bottom += getOverlayTransparentMargin().bottom
+            val screenHeight = resources.displayMetrics.heightPixels
+            val screenWidth = resources.displayMetrics.widthPixels
+            
+            binding.apply {
+                // Set content first
+                txvTitle.text = getTitle()
+                txvSubTitle.text = getSubTitle()
+                txvLimit.apply {
+                    visibility = if (getMax() == 0) View.GONE else View.VISIBLE
+                    text = if (visibility == View.VISIBLE) {
+                        "(${getLimit() + 1}/${getMax() + 1})"
+                    } else ""
+                }
 
-            val layerWidth = layer.width
-            val layerHeight = layer.height
-            when (getOverlayTransparentShape()) {
-                Shape.BOX -> {
-                    layer.drawRoundRect(
-                        RectF(targetViewSize),
-                        getOverlayTransparentCornerRadius(),
-                        getOverlayTransparentCornerRadius(),
-                        mOverlayTransparentPaint
+                // Measure dialog before positioning
+                itemRoot.measure(
+                    MeasureSpec.makeMeasureSpec(screenWidth - 64, MeasureSpec.AT_MOST),
+                    MeasureSpec.makeMeasureSpec(screenHeight - 64, MeasureSpec.AT_MOST)
+                )
+                
+                val dialogHeight = itemRoot.measuredHeight
+                val dialogWidth = itemRoot.measuredWidth
+
+                // Calculate target center and edges
+                val targetTop = targetViewSize.top
+                val targetBottom = targetViewSize.bottom
+                val targetCenter = targetViewSize.centerX()
+                
+                // Calculate available space
+                val spaceAbove = targetTop
+                val spaceBelow = screenHeight - targetBottom
+                
+                // Determine optimal position
+                val showBelow = when (getLimit()) {
+                    0 -> true  // First item always below
+                    1 -> false // Second item always above
+                    else -> spaceBelow >= dialogHeight || spaceBelow > spaceAbove
+                }
+
+                // Position arrow
+                itemDashed.apply {
+                    visibility = View.VISIBLE
+                    measure(
+                        MeasureSpec.UNSPECIFIED,
+                        MeasureSpec.UNSPECIFIED
                     )
 
-                    val halfWidthScreen = layerWidth / 2
-                    val halfHeightScreen = layerHeight / 2
-
-                    val startMiddleEnd = positionLeftMiddleRight(
-                        targetViewSize.left,
-                        targetViewSize.right,
-                        halfWidthScreen
-                    )
-                    val topBottom = positionTopBottom(targetViewSize.bottom, halfHeightScreen)
-
-                    binding.apply {
-                        txvTitle.text = getTitle()
-                        txvSubTitle.text = getSubTitle()
-                        if (getMax() == 0) {
-                            txvLimit.visibility = View.GONE
-                        } else {
-                            txvLimit.apply {
-                                text = mContext?.getString(
-                                    R.string.coachmarkLabel_value_limit,
-                                    getLimit().plus(1).toString(),
-                                    getMax().plus(1).toString()
-                                )
-                                visibility = View.VISIBLE
-                            }
-                        }
-                        btnNext.text = getTextBtnPositive()
-                        btnNext.setBackgroundColor(getTextBtnPositiveBGColor())
-                        btnNext.setTextColor(getTextBtnPositiveTextColor())
-                        if (getSkipBtn() == null) {
-                            btnSkip.visibility = View.GONE
-                        } else {
-                            btnSkip.text = getSkipBtn()
-                            btnSkip.setBackgroundColor(getSkipBtnBGColor())
-                            btnSkip.setTextColor(getSkipBtnTextColor())
-                        }
-                        if (getGravity() == Gravity.NULL) {
-                            // automatic
-                            when (topBottom) {
-                                GravityIn.TOP -> {
-                                    when (startMiddleEnd) {
-                                        GravityIn.START -> {
-                                            GravityHelper.EndBottomGravity()
-                                                .gravity(this, targetViewSize)
-                                        }
-
-                                        GravityIn.CENTER -> {
-                                            GravityHelper.BottomGravity()
-                                                .gravity(this, targetViewSize)
-                                        }
-
-                                        GravityIn.END -> {
-                                            GravityHelper.StartBottomGravity()
-                                                .gravity(this, targetViewSize)
-                                        }
-
-                                        else -> {}
-                                    }
-                                }
-
-                                GravityIn.BOTTOM -> {
-                                    when (startMiddleEnd) {
-                                        GravityIn.START -> {
-                                            GravityHelper.EndTopGravity()
-                                                .gravity(this, targetViewSize)
-                                        }
-
-                                        GravityIn.CENTER -> {
-                                            GravityHelper.TopGravity().gravity(this, targetViewSize)
-                                        }
-
-                                        GravityIn.END -> {
-                                            GravityHelper.StartTopGravity()
-                                                .gravity(this, targetViewSize)
-                                        }
-
-                                        else -> {}
-                                    }
-                                }
-
-                                GravityIn.CENTER -> {
-                                    if (startMiddleEnd == GravityIn.CENTER) {
-                                        GravityHelper.BottomGravity().gravity(this, targetViewSize)
-                                    }
-                                }
-
-                                else -> {}
-                            }
-                        } else {
-                            // manual
-                            when (getGravity()) {
-                                Gravity.TOP -> {
-                                    GravityHelper.TopGravity().gravity(this, targetViewSize)
-                                }
-
-                                Gravity.BOTTOM -> {
-                                    GravityHelper.BottomGravity().gravity(this, targetViewSize)
-                                }
-
-                                Gravity.START_TOP -> {
-                                    GravityHelper.StartTopGravity().gravity(this, targetViewSize)
-                                }
-
-                                Gravity.END_TOP -> {
-                                    GravityHelper.EndTopGravity().gravity(this, targetViewSize)
-                                }
-
-                                Gravity.END_BOTTOM -> {
-                                    GravityHelper.EndBottomGravity().gravity(this, targetViewSize)
-                                }
-
-                                Gravity.START_BOTTOM -> {
-                                    GravityHelper.StartBottomGravity().gravity(this, targetViewSize)
-                                }
-
-                                else -> {}
-                            }
-                        }
+                    if (showBelow) {
+                        setImageResource(R.drawable.img_dashed_coachmark_top)
+                        translationY = targetBottom.toFloat()
+                    } else {
+                        setImageResource(R.drawable.img_dashed_coachmark_bottom)
+                        translationY = targetTop.toFloat() - measuredHeight
                     }
+                    
+                    // Center arrow horizontally with target
+                    translationX = (targetCenter - measuredWidth / 2f)
+                }
+
+                // Position dialog
+                itemRoot.apply {
+                    visibility = View.VISIBLE
+                    
+                    // Calculate horizontal position
+                    val minX = 32f
+                    val maxX = (screenWidth - dialogWidth - 32f).coerceAtLeast(minX)
+                    val idealX = targetCenter - dialogWidth / 2f
+                    translationX = idealX.coerceIn(minX, maxX)
+                    
+                    // Calculate vertical position
+                    if (showBelow) {
+                        translationY = itemDashed.translationY + itemDashed.measuredHeight + 8
+                    } else {
+                        translationY = itemDashed.translationY - dialogHeight - 8
+                    }
+                    
+                    // Ensure dialog stays within screen bounds
+                    translationY = translationY.coerceIn(
+                        32f,
+                        screenHeight - dialogHeight - 32f
+                    )
                 }
             }
+
+            // Draw highlight around target
+            val padding = 8
+            val highlightRect = Rect(
+                targetViewSize.left - padding,
+                targetViewSize.top - padding,
+                targetViewSize.right + padding,
+                targetViewSize.bottom + padding
+            )
+            
+            layer.drawRoundRect(
+                RectF(highlightRect),
+                16f, 16f,
+                mOverlayTransparentPaint
+            )
         }
     }
 

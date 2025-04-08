@@ -31,38 +31,37 @@ class CoachMarkSequence(private val mContext: Activity) {
         object : OverlayClickListener {
             override fun onOverlayClick(overlay: CoachMarkOverlay, binding: CoachmarkitemCoachmarkBinding) {
                 mCoachMark = overlay
-                if (mSequenceQueue.size > 0) {
-                    mSequenceItem = mSequenceQueue.poll()
-                    if (mSequenceQueue.isEmpty()) {
-                        overlay.mBuilder?.setOverlayTransparentPadding(0, 0, 0, 0)
-                    }
-                    mSequenceItem?.apply {
-                        overlay.mBuilder?.let { builder ->
-                            builder.setTabPosition(getTabPosition())
-                            if (builder.getOverlayTargetView() != null) {
-                                builder.setInfoText(getTitle(), getSubTitle(), getLimit())
-                                builder.setSkipBtn(getSkipBtn() ,getSkipBtnBGColor(), getSkipBtnTextColor())
-                                builder.setTextBtnPositive(getTextBtnPositive(), getTextBtnPositiveBGColor(), getTextBtnPositiveTextColor())
-                                builder.setOverlayTargetView(getOverlayTargetView())
-                                builder.setGravity(getGravity())
-                            } else {
-                                builder.setInfoText("", "", 0)
-                                builder.setSkipBtn("null")
-                                builder.setTextBtnPositive("")
-                                builder.setOverlayTargetView(null)
-                                builder.setGravity(Gravity.NULL)
-                                builder.setOverlayTargetCoordinates(getOverlayTargetCoordinates())
-                            }
-                            mSequenceListener.apply {
-                                onNextItem(overlay, this@CoachMarkSequence)
-                            }
+                if (mSequenceQueue.isEmpty()) {
+                    // This is the last item, clean up and finish
+                    binding.view.visibility = View.GONE
+                    (mContext.window.decorView as ViewGroup).removeView(overlay)
+                    onFinishCallback?.onFinish()
+                    return
+                }
+
+                // Handle next item
+                mSequenceItem = mSequenceQueue.poll()
+                mSequenceItem?.apply {
+                    overlay.mBuilder?.let { builder ->
+                        builder.setTabPosition(getTabPosition())
+                        if (builder.getOverlayTargetView() != null) {
+                            builder.setInfoText(getTitle(), getSubTitle(), getLimit())
+                            builder.setSkipBtn(getSkipBtn(), getSkipBtnBGColor(), getSkipBtnTextColor())
+                            builder.setTextBtnPositive(
+                                getTextBtnPositive(), 
+                                getTextBtnPositiveBGColor(), 
+                                getTextBtnPositiveTextColor()
+                            )
+                            builder.setOverlayTargetView(getOverlayTargetView())
+                            builder.setGravity(getGravity())
+                            
+                            // Force a redraw
+                            overlay.invalidate()
                         }
                     }
-                } else {
-                    (mContext.window.decorView as ViewGroup).removeView(overlay)
-                    mSequenceQueue.clear()
-                    binding.view.visibility = View.GONE
-                    onFinishCallback?.onFinish()
+                    mSequenceListener.apply {
+                        onNextItem(overlay, this@CoachMarkSequence)
+                    }
                 }
             }
         }

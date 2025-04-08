@@ -38,7 +38,7 @@ internal class NativeView(context: Context, id: Int, creationParams: Map<String,
         textView.textSize = 1f
         textView.alpha = 0.01f // Almost invisible but still present
         textView.text = ""
-        textView.id = id+1
+        textView.id = id
         textView.contentDescription = viewTag
         textView.tag = viewTag
         NativeViewRegistry.registerView(viewTag, textView.id)

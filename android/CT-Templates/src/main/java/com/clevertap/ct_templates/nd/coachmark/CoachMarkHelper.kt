@@ -57,9 +57,6 @@ class CoachMarkHelper {
 
                         val viewId = resolveViewId(context, viewIdString)
                         Log.d("CoachMarkHelper", "Resolved view ID for key " + viewIdKey + ": " + viewId);
-                        if (viewId == 0) {
-                            throw JSONException("Invalid view ID for '$viewIdKey': $viewIdString")
-                        }
 
                         val isLastItem = (i == coachMarkCount)
                         addCoachMarkItem(viewId, titleKey, subTitleKey, isLastItem, context, customKv)
@@ -80,21 +77,33 @@ class CoachMarkHelper {
                         try {
                             start(rootView)
                             setOnFinishCallback {
-                                onComplete()
+                                // Ensure we're on the main thread for cleanup
+                                context.runOnUiThread {
+                                    try {
+                                        // Find and remove any remaining overlay views
+                                        for (i in 0 until rootView.childCount) {
+                                            val child = rootView.getChildAt(i)
+                                            if (child is CoachMarkOverlay) {
+                                                rootView.removeView(child)
+                                            }
+                                        }
+                                        onComplete()
+                                    } catch (e: Exception) {
+                                        Log.e("CoachMarkHelper", "Error during cleanup: ${e.message}")
+                                        onComplete()
+                                    }
+                                }
                             }
                         } catch (e: Exception) {
                             Log.e("CoachMarkHelper", "Error starting coach marks: ${e.message}")
-                            e.printStackTrace()
+                            onComplete()
                         }
                     }
-                } else {
-                    Log.e("CoachMarkHelper", "Root view is null")
                 }
             }
-        } catch (e: JSONException) {
-            Log.e("CoachMarkHelper", "Error initializing CoachMarkSequence: ${e.message}")
         } catch (e: Exception) {
-            Log.e("CoachMarkHelper", "Unexpected error: ${e.message}")
+            Log.e("CoachMarkHelper", "Error in renderCoachMark: ${e.message}")
+            onComplete()
         }
     }
 
@@ -138,12 +147,9 @@ class CoachMarkHelper {
         Log.d("SDK_resolveViewId", "Searching for view with testId (contentDescription): '$testId'")
         val targetView = findViewWithTestId(rootView, testId) // Calls the function above
         // It returns the view's Android ID if found, otherwise 0
-        val foundId = targetView?.id ?: 0
-        if (foundId == 0) {
-            Log.w("SDK_resolveViewId", "View NOT found for testId '$testId'")
-        } else {
+        val foundId = targetView!!.id
             Log.i("SDK_resolveViewId", "View found for testId '$testId', returning ID: $foundId")
-        }
+
         return foundId
     }
 

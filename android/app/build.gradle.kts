@@ -44,6 +44,7 @@ dependencies {
    // Firebase Messaging
     implementation("com.google.firebase:firebase-messaging:21.0.0")
     implementation(platform("com.google.firebase:firebase-bom:33.11.0"))
+    implementation("com.google.firebase:firebase-analytics")
 
     // AndroidX Core and Fragment
     implementation("androidx.core:core:1.3.0")
@@ -67,6 +68,11 @@ dependencies {
     implementation("androidx.fragment:fragment:1.3.6")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation(project(":CT-Templates"))
+
+    implementation ("com.clevertap.android:clevertap-geofence-sdk:1.4.0")
+    implementation ("com.google.android.gms:play-services-location:21.0.0")
+    implementation ("androidx.work:work-runtime:2.7.1") // required for FETCH_LAST_LOCATION_PERIODIC
+    implementation ("androidx.concurrent:concurrent-futures:1.1.0") // required for FETCH_LAST_LOCATION_PERIODIC
 }
 
 

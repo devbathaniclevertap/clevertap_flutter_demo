@@ -143,6 +143,9 @@ class HomeProvider with ChangeNotifier {
     if (!isPushPermissionEnabled) {
       requestNotificationPermission();
     } else {
+      await CleverTapPlugin.recordEvent("GetNotification", {
+        "product_name": "Vada pav",
+      });
       log("Push Permission is already enabled.");
     }
   }
