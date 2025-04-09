@@ -1,9 +1,12 @@
 package com.example.flutter_clevertap_demo
 
+import android.Manifest
+import android.app.AlertDialog
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.PersistableBundle
 import android.util.Log
 import androidx.annotation.NonNull
 import com.clevertap.android.geofence.CTGeofenceAPI
@@ -20,6 +23,7 @@ import org.json.JSONObject
 
 
 class MainActivity : FlutterActivity() {
+    private val LOCATION_PERMISSION_REQUEST = 1001
     private val CHANNEL = "com.example.yourapp/method_channel"
     var ctGeofenceSettings = CTGeofenceSettings.Builder()
         .enableBackgroundLocationUpdates(true)//boolean to enable background location updates
@@ -53,11 +57,94 @@ class MainActivity : FlutterActivity() {
                 }
             }
     }
-    private  fun enableGeoFence(){
-        Log.d("MainActivity", "onCreate called")
-        val cleverTapAPI = CleverTapAPI.getDefaultInstance(getApplicationContext())
+
+    private fun enableGeoFence() {
+        requestLocationPermissions()
+    }
+
+    private fun requestLocationPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val fineLocation = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+            val coarseLocation = checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+            
+            val permissionsToRequest = mutableListOf<String>()
+            
+            if (fineLocation != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+            if (coarseLocation != PackageManager.PERMISSION_GRANTED) {
+                permissionsToRequest.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+            }
+
+            if (permissionsToRequest.isNotEmpty()) {
+                requestPermissions(
+                    permissionsToRequest.toTypedArray(),
+                    LOCATION_PERMISSION_REQUEST
+                )
+            } else {
+                // Location permissions are already granted, request background location if needed
+                requestBackgroundLocation()
+            }
+        }
+    }
+
+    private fun requestBackgroundLocation() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val backgroundLocation = checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            
+            if (backgroundLocation != PackageManager.PERMISSION_GRANTED) {
+                AlertDialog.Builder(this)
+                    .setTitle("Background Location Permission")
+                    .setMessage("This app needs background location access to notify you about nearby offers. Please allow background location access.")
+                    .setPositiveButton("Allow") { _, _ ->
+                        requestPermissions(
+                            arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                            LOCATION_PERMISSION_REQUEST + 1
+                        )
+                    }
+                    .setNegativeButton("Deny") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .create()
+                    .show()
+            } else {
+                initializeGeofencing()
+            }
+        } else {
+            initializeGeofencing()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        
+        when (requestCode) {
+            LOCATION_PERMISSION_REQUEST -> {
+                if (grantResults.isNotEmpty() && 
+                    grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                    // Location permissions granted, request background location
+                    requestBackgroundLocation()
+                }
+            }
+            LOCATION_PERMISSION_REQUEST + 1 -> {
+                if (grantResults.isNotEmpty() && 
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Background location permission granted
+                    initializeGeofencing()
+                }
+            }
+        }
+    }
+
+    private fun initializeGeofencing() {
+        Log.d("MainActivity", "Initializing geofencing")
+        val cleverTapAPI = CleverTapAPI.getDefaultInstance(applicationContext)
         if (cleverTapAPI != null) {
-            CTGeofenceAPI.getInstance(getApplicationContext()).init(ctGeofenceSettings, cleverTapAPI)
+            CTGeofenceAPI.getInstance(applicationContext).init(ctGeofenceSettings, cleverTapAPI)
             CTGeofenceAPI.getInstance(applicationContext)
                 .setCtGeofenceEventsListener(object : CTGeofenceEventsListener {
                     override fun onGeofenceEnteredEvent(jsonObject: JSONObject) {
@@ -69,11 +156,11 @@ class MainActivity : FlutterActivity() {
                         cleverTapAPI.pushEvent("Office Exited")
                     }
                 })
-
-        }else{
+        } else {
             Log.e("MainActivity", "CleverTapAPI is null")
         }
     }
+
     private fun showCoachMarks(jsonString: String) {
         Handler(Looper.getMainLooper()).postDelayed({
             try {
