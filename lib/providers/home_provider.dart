@@ -90,11 +90,14 @@ class HomeProvider with ChangeNotifier {
 
   //recordEvent
   void recordEvent() async {
-    await CleverTapPlugin.recordEvent("CoachmarksND", {
+    final epochTime =
+        DateTime.now().millisecondsSinceEpoch ~/ 1000; // Convert to seconds
+    await CleverTapPlugin.recordEvent("Product Viewed", {
       "product_name": "Vada pav",
+      "date/time": "\$D_$epochTime", // Using \$ to escape the $ symbol
     });
     await Future.delayed(Duration(seconds: 2));
-    getAdUnits();
+    // getAdUnits();
   }
 
   //setLocation
@@ -135,6 +138,9 @@ class HomeProvider with ChangeNotifier {
   }
 
   void getNotificationPermission() async {
+    await CleverTapPlugin.recordEvent("GetNotification", {
+      "product_name": "Vada pav",
+    });
     bool? isPushPermissionEnabled =
         await CleverTapPlugin.getPushNotificationPermissionStatus();
     log(isPushPermissionEnabled.toString());
