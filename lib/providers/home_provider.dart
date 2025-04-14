@@ -93,10 +93,10 @@ class HomeProvider with ChangeNotifier {
     final epochTime =
         DateTime.now().millisecondsSinceEpoch ~/ 1000; // Convert to seconds
     await CleverTapPlugin.recordEvent("Product Viewed", {
-      "product_name": "Vada pav",
+      "product_name": "vada pav",
       "date/time": "\$D_$epochTime", // Using \$ to escape the $ symbol
     });
-    await Future.delayed(Duration(seconds: 2));
+    // await Future.delayed(Duration(seconds: 2));
     // getAdUnits();
   }
 
