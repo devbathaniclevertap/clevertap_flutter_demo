@@ -130,7 +130,7 @@ class HomeProvider with ChangeNotifier {
   }
 
   void pushClickedPayloadReceived(Map<String, dynamic> notificationPayload) {
-    log(
+    print(
       "pushClickedPayloadReceived called with notification payload: $notificationPayload",
     );
     // You may perform UI operation like redirecting the user to a specific page based on custom key-value pairs
@@ -138,21 +138,32 @@ class HomeProvider with ChangeNotifier {
   }
 
   void getNotificationPermission() async {
-    await CleverTapPlugin.recordEvent("GetNotification", {
-      "product_name": "Vada pav",
-    });
-    bool? isPushPermissionEnabled =
-        await CleverTapPlugin.getPushNotificationPermissionStatus();
-    log(isPushPermissionEnabled.toString());
-    if (isPushPermissionEnabled == null) return;
+    try {
+      bool? isPushPermissionEnabled =
+          await CleverTapPlugin.getPushNotificationPermissionStatus();
+      log("Current permission status: $isPushPermissionEnabled");
 
-    if (!isPushPermissionEnabled) {
-      requestNotificationPermission();
-    } else {
-      await CleverTapPlugin.recordEvent("GetNotification", {
-        "product_name": "Vada pav",
-      });
-      log("Push Permission is already enabled.");
+      if (isPushPermissionEnabled == null || !isPushPermissionEnabled) {
+        // Request permission
+        var status = await Permission.notification.request();
+        log("Permission request result: $status");
+
+        if (status.isGranted) {
+          await CleverTapPlugin.recordEvent("NotificationPermissionGranted", {
+            "status": "granted",
+          });
+        } else {
+          // Show settings dialog if denied
+          await openAppSettings();
+        }
+      } else {
+        log("Push Permission is already enabled");
+        await CleverTapPlugin.recordEvent("GetNotification", {
+          "product_name": "Vada pav",
+        });
+      }
+    } catch (e) {
+      log("Error requesting notification permission: $e");
     }
   }
 

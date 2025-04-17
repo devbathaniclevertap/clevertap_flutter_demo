@@ -49,5 +49,13 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Required for rich push notifications</string>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>We need to send you notifications for important updates and messages</string>
 </dict>
 </plist>

@@ -68,6 +68,7 @@ dependencies {
     implementation("androidx.fragment:fragment:1.3.6")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation(project(":CT-Templates"))
+    implementation("com.clevertap.android:push-templates:1.3.0")
 
     implementation ("com.clevertap.android:clevertap-geofence-sdk:1.4.0")
     implementation ("com.google.android.gms:play-services-location:21.0.0")

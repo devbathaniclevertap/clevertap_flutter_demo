@@ -14,7 +14,7 @@
 
     <application
         android:label="Flutter Clevertap Demo"
-        android:name="com.clevertap.android.sdk.Application"
+        android:name="com.example.flutter_clevertap_demo.MyApplication"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name="com.example.flutter_clevertap_demo.MainActivity"
@@ -37,6 +37,11 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="FLUTTER_NOTIFICATION_CLICK" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
         </activity>
         <service android:name="com.clevertap.android.sdk.pushnotification.fcm.FcmMessageListenerService" 
          android:exported="true">
@@ -44,6 +49,26 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <service
+            android:name="com.clevertap.pushtemplates.PTNotificationIntentService"
+            android:exported="false">
+                <intent-filter>
+                    <action android:name="com.clevertap.PT_PUSH_EVENT"/>
+                </intent-filter>
+        </service>
+
+        <receiver
+            android:name="com.clevertap.pushtemplates.PTPushNotificationReceiver"
+            android:exported="false"
+            android:enabled="true">
+        </receiver>
+
+        <receiver
+            android:name="com.clevertap.pushtemplates.PushTemplateReceiver"
+            android:exported="false"
+            android:enabled="true">
+        </receiver>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

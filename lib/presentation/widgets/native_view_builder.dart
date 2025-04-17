@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -9,9 +11,15 @@ class NativeTaggedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Return empty SizedBox for iOS
+    if (Platform.isIOS) {
+      return const SizedBox.shrink();
+    }
+
+    // Show native view only for Android
     return SizedBox(
-      width: 200, // Increased size for better hit testing
-      height: 20, // Increased size for better hit testing
+      width: 200,
+      height: 20,
       child: Center(
         child: AndroidView(
           viewType: 'tagged_view',
