@@ -18,14 +18,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     CleverTapPlugin.initializeInbox();
-    // CleverTapPlugin.setDebugLevel(3);
+    CleverTapPlugin.setDebugLevel(3);
     _cleverTapPlugin.setCleverTapPushClickedPayloadReceivedHandler(
       context.read<HomeProvider>().pushClickedPayloadReceived,
     );
     _cleverTapPlugin.setCleverTapDisplayUnitsLoadedHandler(
-      context.read<HomeProvider>().onDisplayUnitsLoaded,
+      (displayUnitList) {
+        context
+            .read<HomeProvider>()
+            .onDisplayUnitsLoaded(displayUnitList, context);
+      },
     );
-
     _cleverTapPlugin.setCleverTapInboxMessagesDidUpdateHandler(
       context.read<HomeProvider>().inboxMessagesDidUpdate,
     );
@@ -195,13 +198,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(height: 24),
                   DropdownButton<String>(
                     value: homeState.selectedAction,
-                    items:
-                        homeState.actions.map((String action) {
-                          return DropdownMenuItem<String>(
-                            value: action,
-                            child: Text(action),
-                          );
-                        }).toList(),
+                    items: homeState.actions.map((String action) {
+                      return DropdownMenuItem<String>(
+                        value: action,
+                        child: Text(action),
+                      );
+                    }).toList(),
                     onChanged: (String? newValue) {
                       if (newValue != null) {
                         homeState.updateSelectedAction(newValue);

@@ -4,6 +4,8 @@ import 'dart:developer';
 import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clevertap_demo/models/native_display_entity.dart';
+import 'package:flutter_clevertap_demo/models/test_native_display_entity.dart';
+import 'package:flutter_clevertap_demo/presentation/home/native_display_screen.dart';
 import 'package:flutter_clevertap_demo/services/native_bridge.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -90,12 +92,18 @@ class HomeProvider with ChangeNotifier {
 
   //recordEvent
   void recordEvent() async {
-    final epochTime =
-        DateTime.now().millisecondsSinceEpoch ~/ 1000; // Convert to seconds
-    await CleverTapPlugin.recordEvent("Product Viewed", {
-      "product_name": "vada pav",
-      "date/time": "\$D_$epochTime", // Using \$ to escape the $ symbol
-    });
+    // final epochTime =
+    //     DateTime.now().millisecondsSinceEpoch ~/ 1000; // Convert to seconds
+    await CleverTapPlugin.recordEvent(stuffController.text, {});
+    if (stuffController.text == "App Inbox Message") {
+      var styleConfig = {
+        'noMessageTextColor': '#ff6600',
+        'noMessageText': 'No message(s) to show.',
+        'navBarTitle': 'App Inbox'
+      };
+      await Future.delayed(Duration(seconds: 3));
+      CleverTapPlugin.showInbox(styleConfig);
+    }
     // await Future.delayed(Duration(seconds: 2));
     // getAdUnits();
   }
@@ -109,13 +117,11 @@ class HomeProvider with ChangeNotifier {
 
   //getCleverTapId
   void getCleverTapId() {
-    CleverTapPlugin.getCleverTapID()
-        .then((clevertapId) {
-          log("$clevertapId");
-        })
-        .catchError((error) {
-          log("$error");
-        });
+    CleverTapPlugin.getCleverTapID().then((clevertapId) {
+      log("$clevertapId");
+    }).catchError((error) {
+      log("$error");
+    });
   }
 
   //createPushNotification
@@ -130,7 +136,7 @@ class HomeProvider with ChangeNotifier {
   }
 
   void pushClickedPayloadReceived(Map<String, dynamic> notificationPayload) {
-    print(
+    log(
       "pushClickedPayloadReceived called with notification payload: $notificationPayload",
     );
     // You may perform UI operation like redirecting the user to a specific page based on custom key-value pairs
@@ -174,8 +180,23 @@ class HomeProvider with ChangeNotifier {
     }
   }
 
-  void onDisplayUnitsLoaded(List<dynamic>? displayUnits) {
-    log("Display Units = $displayUnits");
+  List<TestNativeDisplayEntity>? entities;
+  void onDisplayUnitsLoaded(List<dynamic>? displayUnits, BuildContext context) {
+    if (displayUnits != null && displayUnits.isNotEmpty) {
+      try {
+        final jsonStr = json.encode(displayUnits);
+        log("Raw Display Units = $jsonStr");
+        entities = testNativeDisplayEntityFromJson(jsonStr);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => NativeDisplayScreen(data: entities!),
+          ),
+        );
+      } catch (e) {
+        log("Error parsing display units: $e");
+      }
+    }
   }
 
   List<NativeDisplayEntity>? nativeDisplayEntity;
@@ -200,15 +221,15 @@ class HomeProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // final _cleverTapPlugin = CleverTapPlugin();
   void inboxMessagesDidUpdate() {
-    log("inboxMessagesDidUpdate called");
+    print("inboxMessagesDidUpdate called");
   }
 
   void getAppBoxData() async {
     final messages = await CleverTapPlugin.getAllInboxMessages();
     log("Message : $messages");
   }
-
 
   Future<void> showCoachMarks(String data) async {
     String response = await NativeBridge.showCoachMarks(data);
