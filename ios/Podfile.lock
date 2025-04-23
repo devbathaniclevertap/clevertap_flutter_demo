@@ -4,7 +4,6 @@ PODS:
   - clevertap_plugin (3.2.0):
     - CleverTap-iOS-SDK (= 7.1.0)
     - Flutter
-  - CTNotificationService (0.1.7)
   - Firebase/CoreOnly (11.8.0):
     - FirebaseCore (~> 11.8.0)
   - Firebase/Messaging (11.8.0):
@@ -79,7 +78,6 @@ PODS:
 
 DEPENDENCIES:
   - clevertap_plugin (from `.symlinks/plugins/clevertap_plugin/ios`)
-  - CTNotificationService
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
@@ -88,7 +86,6 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - CleverTap-iOS-SDK
-    - CTNotificationService
     - Firebase
     - FirebaseCore
     - FirebaseCoreInternal
@@ -115,7 +112,6 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   CleverTap-iOS-SDK: 571ced90fc6378635db504f9767c62858e2c5286
   clevertap_plugin: 26d665138f812ce40dbd554aaa0d73673980f584
-  CTNotificationService: 3eceea27cf0e28a2e14267bb706013363eb620c6
   Firebase: d80354ed7f6df5f9aca55e9eb47cc4b634735eaf
   firebase_core: 8d552814f6c01ccde5d88939fced4ec26f2f5510
   firebase_messaging: 8b96a4f09841c15a16b96973ef5c3dcfc1a064e4
@@ -131,6 +127,6 @@ SPEC CHECKSUMS:
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   SDWebImage: f84b0feeb08d2d11e6a9b843cb06d75ebf5b8868
 
-PODFILE CHECKSUM: ae0b413ad49b854ee6a6da51ca34c999bf23b701
+PODFILE CHECKSUM: 6a457177e4b8e70f8e82596fd969ff5b524a520d
 
 COCOAPODS: 1.16.2
