@@ -23,8 +23,8 @@ exports.sendAndroidUninstallToCleverTap = functions.analytics.event('app_remove'
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CleverTap-Account-Id': 'TEST-468-488-R47Z',
-            'X-CleverTap-Passcode': 'AME-AQW-MAEL'
+            'X-CleverTap-Account-Id': 'YOUR_CT_ACCOUNT_ID',
+            'X-CleverTap-Passcode': 'YOUR_CT_PASSCODE',
         },
         body: data,
         url: 'https://api.clevertap.com/firebase/upload',
