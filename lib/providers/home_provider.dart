@@ -258,8 +258,6 @@ class HomeProvider with ChangeNotifier {
   }
 
   void handleDeepLink(Uri uri, BuildContext context) {
-    debugPrint('Received deep link: ${uri.toString()}');
-
     log("The URL is $uri");
   }
 }
