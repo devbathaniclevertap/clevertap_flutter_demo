@@ -14,6 +14,7 @@ import com.clevertap.android.geofence.CTGeofenceSettings
 import com.clevertap.android.geofence.interfaces.CTGeofenceEventsListener
 import com.clevertap.android.sdk.CleverTapAPI
 import com.clevertap.ct_templates.nd.coachmark.CoachMarkHelper
+import com.google.firebase.analytics.FirebaseAnalytics
 import dev.flutter.example.NativeViewFactory
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -41,6 +42,13 @@ class MainActivity : FlutterActivity() {
                 NativeViewFactory()
             )
         enableGeoFence()
+        val defaultInstance = CleverTapAPI.getDefaultInstance(this)
+        defaultInstance?.let { ins ->
+            Log.i("FIREBASE LOG", "setting object id to firebase : ${ins.cleverTapID}")
+            FirebaseAnalytics.getInstance(this).setUserProperty("ct_objectId", ins.cleverTapID)
+        } ?: run {
+            Log.e("FIREBASE LOG", "Uninstall tracking not setup cause of non initialised instance")
+        }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
                 when (call.method) {

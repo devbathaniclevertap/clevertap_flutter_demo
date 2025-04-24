@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:app_links/app_links.dart';
 import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clevertap_demo/models/native_display_entity.dart';
@@ -15,6 +16,7 @@ class HomeProvider with ChangeNotifier {
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController identityController = TextEditingController();
   TextEditingController stuffController = TextEditingController();
+  final AppLinks _appLinks = AppLinks();
 
   String selectedAction = "onUserLogin";
   final List<String> actions = [
@@ -234,5 +236,30 @@ class HomeProvider with ChangeNotifier {
   Future<void> showCoachMarks(String data) async {
     String response = await NativeBridge.showCoachMarks(data);
     log("Coach Marks Response: $response");
+  }
+
+  // Initialize deep linking
+  Future<void> initDeepLinks(BuildContext context) async {
+    try {
+      // Handle initial link if app was opened from dead state
+      final initialUri = await _appLinks.getInitialLink();
+      if (initialUri != null && context.mounted) {
+        handleDeepLink(initialUri, context);
+      }
+      // Handle links when app is in background/foreground
+      _appLinks.uriLinkStream.listen((uri) {
+        if (context.mounted) {
+          handleDeepLink(uri, context);
+        }
+      });
+    } catch (e) {
+      debugPrint('Deep link error: $e');
+    }
+  }
+
+  void handleDeepLink(Uri uri, BuildContext context) {
+    debugPrint('Received deep link: ${uri.toString()}');
+
+    log("The URL is $uri");
   }
 }

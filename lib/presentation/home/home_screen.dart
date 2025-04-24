@@ -32,7 +32,9 @@ class _HomeScreenState extends State<HomeScreen> {
     _cleverTapPlugin.setCleverTapInboxMessagesDidUpdateHandler(
       context.read<HomeProvider>().inboxMessagesDidUpdate,
     );
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HomeProvider>().initDeepLinks(context);
+    });
     super.initState();
   }
 
