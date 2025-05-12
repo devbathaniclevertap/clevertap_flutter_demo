@@ -34,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeProvider>().initDeepLinks(context);
+      // context.read<HomeProvider>().initSignedCall();
     });
     super.initState();
   }
@@ -276,6 +277,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         homeState.getNotificationPermission();
                       } else if (homeState.selectedAction == "getAppBoxData") {
                         homeState.getAppBoxData();
+                      } else if (homeState.selectedAction == "makeACall") {
+                        // homeState.makeSignedCall();
                       } else if (homeState.selectedAction ==
                           "inboxDidInitialize") {
                         homeState.inboxDidInitialize();

@@ -1,4 +1,4 @@
-package com.example.flutter_clevertap_demo
+package com.clevertap.demo
 
 import android.os.Bundle
 import android.util.Log

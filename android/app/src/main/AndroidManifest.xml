@@ -14,10 +14,10 @@
 
     <application
         android:label="Flutter Clevertap Demo"
-        android:name="com.example.flutter_clevertap_demo.MyApplication"
+        android:name="com.clevertap.demo.MyApplication"
         android:icon="@mipmap/launcher_icon">
         <activity
-            android:name="com.example.flutter_clevertap_demo.MainActivity"
+            android:name="com.clevertap.demo.MainActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:exported="true"
             android:launchMode="singleTop"
@@ -76,17 +76,14 @@
             android:value="2" />
         <meta-data
                 android:name="CLEVERTAP_ACCOUNT_ID"
-                android:value="YOUR_CT_ACCOUNT_ID"/>
+                android:value="TEST-4W5-9RR-646Z"/>
         <meta-data
                 android:name="CLEVERTAP_TOKEN"
-                android:value="YOUR_CT_TOKEN"/>
+                android:value="TEST-22c-504"/>
             <!-- IMPORTANT: To force use Google AD ID to uniquely identify  users, use the following meta tag. GDPR mandates that if you are using this tag, there is prominent disclousure to your end customer in their application. Read more about GDPR here - https://clevertap.com/blog/in-preparation-of-gdpr-compliance/ -->
         <meta-data
                 android:name="CLEVERTAP_USE_GOOGLE_AD_ID"
                 android:value="0"/>
-        <meta-data
-            android:name="CLEVERTAP_IDENTIFIER"
-            android:value="Email,Identity"/>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

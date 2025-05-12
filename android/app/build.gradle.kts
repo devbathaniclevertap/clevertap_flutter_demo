@@ -74,6 +74,18 @@ dependencies {
     implementation ("com.google.android.gms:play-services-location:21.0.0")
     implementation ("androidx.work:work-runtime:2.7.1") // required for FETCH_LAST_LOCATION_PERIODIC
     implementation ("androidx.concurrent:concurrent-futures:1.1.0") // required for FETCH_LAST_LOCATION_PERIODIC
+    //To integrate Signed Call Android SDK
+    implementation("com.clevertap.android:clevertap-signedcall-sdk:0.0.7.4")
+    //To enable the socket-based signaling channel
+    implementation("io.socket:socket.io-client:2.1.0") {
+        exclude(group = "org.json", module = "json")
+    }
+    //To load the image assets on the call screens
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    //To process the incoming call push for the receiver
+    implementation("androidx.work:work-runtime:2.7.1")
+    //To build a responsive UI for the call screens
+    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
 }
 
 

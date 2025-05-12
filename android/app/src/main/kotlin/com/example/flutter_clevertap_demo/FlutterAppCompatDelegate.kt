@@ -1,4 +1,4 @@
-package com.example.flutter_clevertap_demo
+package com.clevertap.demo
 
 import android.content.Context
 import android.content.res.Resources
