@@ -19,6 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     CleverTapPlugin.initializeInbox();
     CleverTapPlugin.setDebugLevel(3);
+
     _cleverTapPlugin.setCleverTapPushClickedPayloadReceivedHandler(
       context.read<HomeProvider>().pushClickedPayloadReceived,
     );
@@ -34,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeProvider>().initDeepLinks(context);
+      context.read<HomeProvider>().getProductExperienceData();
       // context.read<HomeProvider>().initSignedCall();
     });
     super.initState();
