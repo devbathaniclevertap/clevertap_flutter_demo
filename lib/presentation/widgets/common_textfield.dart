@@ -26,6 +26,7 @@ class CommonTextfield extends StatelessWidget {
     this.minLines,
     this.obscureText = false,
     this.style,
+    this.globalKey,
     this.contentPadding,
     this.hintText,
     this.textCapitalization = TextCapitalization.none,
@@ -34,6 +35,7 @@ class CommonTextfield extends StatelessWidget {
   final int? maxLength;
   final bool? enabled;
   final String? hintText;
+  final GlobalKey? globalKey;
   final double? height;
   final Widget? suffix;
   final Widget? prefix;
@@ -62,6 +64,7 @@ class CommonTextfield extends StatelessWidget {
       maxLines: maxLines ?? 1,
       controller: controller,
       focusNode: focusNode,
+      key: globalKey,
       textInputAction: textInputAction,
       textCapitalization: textCapitalization,
       inputFormatters: inputFormatters,

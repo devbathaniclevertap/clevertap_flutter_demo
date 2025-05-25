@@ -1,4 +1,4 @@
-package com.clevertap.demo
+package com.example.flutter_clevertap_demo
 
 import android.Manifest
 import android.app.AlertDialog
@@ -13,6 +13,9 @@ import com.clevertap.android.geofence.CTGeofenceAPI
 import com.clevertap.android.geofence.CTGeofenceSettings
 import com.clevertap.android.geofence.interfaces.CTGeofenceEventsListener
 import com.clevertap.android.sdk.CleverTapAPI
+import com.clevertap.android.sdk.CleverTapAPI.getDefaultInstance
+import com.clevertap.android.sdk.inapp.customtemplates.template
+import com.clevertap.clevertap_plugin.ClevertapCustomTemplates
 import com.clevertap.ct_templates.nd.coachmark.CoachMarkHelper
 import com.google.firebase.analytics.FirebaseAnalytics
 import dev.flutter.example.NativeViewFactory
@@ -49,6 +52,8 @@ class MainActivity : FlutterActivity() {
         } ?: run {
             Log.e("FIREBASE LOG", "Uninstall tracking not setup cause of non initialised instance")
         }
+
+        Log.d("Android","In the MainApplication")
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
                 when (call.method) {

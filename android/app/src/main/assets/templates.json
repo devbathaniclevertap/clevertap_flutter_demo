@@ -1,0 +1,15 @@
+{
+  "Nudges_Code_Template": {
+    "type": "template",
+    "arguments": {
+      "icon_0": {
+        "type": "string",
+        "value": "Enter your name here"
+      },
+      "icon_1": {
+        "type": "string",
+        "value": "Enter your email here"
+      }
+    }
+  }
+}

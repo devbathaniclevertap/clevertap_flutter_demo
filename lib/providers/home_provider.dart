@@ -14,6 +14,7 @@ import 'package:flutter_clevertap_demo/models/test_native_display_entity.dart';
 import 'package:flutter_clevertap_demo/presentation/home/native_display_screen.dart';
 import 'package:flutter_clevertap_demo/services/native_bridge.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class HomeProvider with ChangeNotifier {
   TextEditingController nameController = TextEditingController();
@@ -35,13 +36,15 @@ class HomeProvider with ChangeNotifier {
     "getNotificationPermission",
     "getAppBoxData",
     "inboxDidInitialize",
-    "makeACall"
+    "makeACall",
+    "productExperience"
   ];
 
   List<String> stuff = [];
 
   void addStuff() {
     stuff.add(stuffController.text);
+    print(stuff);
     notifyListeners();
   }
 
@@ -53,6 +56,7 @@ class HomeProvider with ChangeNotifier {
 
   void updateSelectedAction(String data) {
     selectedAction = data;
+
     notifyListeners();
   }
 
@@ -116,6 +120,9 @@ class HomeProvider with ChangeNotifier {
       };
       await Future.delayed(Duration(seconds: 3));
       CleverTapPlugin.showInbox(styleConfig);
+    }
+    if (stuffController.text == "Nudges Event") {
+      activateCleverTapFlutterPluginHandlers();
     }
   }
 
@@ -237,17 +244,6 @@ class HomeProvider with ChangeNotifier {
     print("inboxMessagesDidUpdate called");
   }
 
-  void getProductExperienceData() async {
-    const variables = {"Testing": "default"};
-    CleverTapPlugin.defineVariables(variables);
-    CleverTapPlugin.syncVariables();
-    CleverTapPlugin.getVariables()
-        .then((variables) => {print("getVariables: $variables")});
-
-    CleverTapPlugin.getVariable('Testing').then((variable) =>
-        {print('variable value for key \'flutter_var_string\': $variable')});
-  }
-
   void getAppBoxData() async {
     final messages = await CleverTapPlugin.getAllInboxMessages();
     log("Message : $messages");
@@ -277,8 +273,65 @@ class HomeProvider with ChangeNotifier {
     }
   }
 
+  final _cleverTapPlugin = CleverTapPlugin();
   void handleDeepLink(Uri uri, BuildContext context) {
     log("The URL is $uri");
   }
 
+  void activateCleverTapFlutterPluginHandlers() {
+    _cleverTapPlugin
+        .setCleverTapCustomTemplatePresentHandler(presentCustomTemplate);
+  }
+
+  void presentCustomTemplate(String templateName) async {
+    log(templateName);
+    setCustomTemplatePresented(templateName);
+    String? data = await CleverTapPlugin.customTemplateGetStringArg(
+        templateName, 'icon_0');
+    log(data!);
+  }
+
+  void setCustomTemplatePresented(String templateName) {
+    CleverTapPlugin.customTemplateSetPresented(templateName);
+  }
+
+  final GlobalKey icon_0 = GlobalKey();
+  final GlobalKey icon_1 = GlobalKey();
+  late TutorialCoachMark tutorialCoachMark;
+  List<TargetFocus> targets = [];
+  void showTutorial(BuildContext context) {
+    targets = [
+      TargetFocus(
+        identify: "Field 1",
+        keyTarget: icon_0,
+        contents: [
+          TargetContent(
+            child: Text(
+              "Enter your name here",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          )
+        ],
+      ),
+      TargetFocus(
+        identify: "Field 2",
+        keyTarget: icon_1,
+        contents: [
+          TargetContent(
+            child: Text(
+              "Email goes here",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          )
+        ],
+      ),
+    ];
+
+    tutorialCoachMark = TutorialCoachMark(targets: targets)
+      ..show(context: context);
+  }
 }

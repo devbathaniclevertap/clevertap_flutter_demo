@@ -1,5 +1,6 @@
 import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_clevertap_demo/presentation/product-experience/product_experience_screen.dart';
 import 'package:flutter_clevertap_demo/presentation/widgets/common_boxshadow_container.dart';
 import 'package:flutter_clevertap_demo/presentation/widgets/common_textfield.dart';
 import 'package:flutter_clevertap_demo/presentation/widgets/native_view_builder.dart';
@@ -15,29 +16,31 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _cleverTapPlugin = CleverTapPlugin();
+
   @override
   void initState() {
     CleverTapPlugin.initializeInbox();
-    CleverTapPlugin.setDebugLevel(3);
+    CleverTapPlugin.setDebugLevel(2);
 
     _cleverTapPlugin.setCleverTapPushClickedPayloadReceivedHandler(
       context.read<HomeProvider>().pushClickedPayloadReceived,
     );
-    _cleverTapPlugin.setCleverTapDisplayUnitsLoadedHandler(
-      (displayUnitList) {
-        context
-            .read<HomeProvider>()
-            .onDisplayUnitsLoaded(displayUnitList, context);
-      },
-    );
+    // _cleverTapPlugin.setCleverTapDisplayUnitsLoadedHandler(
+    //   (displayUnitList) {
+    //     context
+    //         .read<HomeProvider>()
+    //         .onDisplayUnitsLoaded(displayUnitList, context);
+    //   },
+    // );
     _cleverTapPlugin.setCleverTapInboxMessagesDidUpdateHandler(
       context.read<HomeProvider>().inboxMessagesDidUpdate,
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeProvider>().initDeepLinks(context);
-      context.read<HomeProvider>().getProductExperienceData();
-      // context.read<HomeProvider>().initSignedCall();
+      // context.read<HomeProvider>().activateCleverTapFlutterPluginHandlers();
+      // context.read<HomeProvider>().showTutorial(context);
     });
+
     super.initState();
   }
 
@@ -97,11 +100,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       SizedBox(height: 4),
                       CommonTextfield(
+                        globalKey: homeState.icon_0,
                         hintText: "Dev Bathani",
                         controller: homeState.nameController,
                       ),
                       SizedBox(height: 16),
-
                       // Email field
                       Stack(
                         children: [
@@ -121,6 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       SizedBox(height: 4),
                       CommonTextfield(
+                        globalKey: homeState.icon_1,
                         hintText: "dev.bathani@clevertap.com",
                         controller: homeState.emailController,
                         textInputType: TextInputType.emailAddress,
@@ -277,6 +281,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       } else if (homeState.selectedAction ==
                           "getNotificationPermission") {
                         homeState.getNotificationPermission();
+                      } else if (homeState.selectedAction == "getAppBoxData") {
+                      } else if (homeState.selectedAction ==
+                          "productExperience") {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ProductExperienceScreen(),
+                          ),
+                        );
                       } else if (homeState.selectedAction == "getAppBoxData") {
                         homeState.getAppBoxData();
                       } else if (homeState.selectedAction == "makeACall") {
