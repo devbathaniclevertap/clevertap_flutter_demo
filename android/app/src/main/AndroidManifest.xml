@@ -14,6 +14,7 @@
 
     <application
         android:label="Flutter Clevertap Demo"
+        android:enableOnBackInvokedCallback="true"
         android:name="com.example.flutter_clevertap_demo.MainApplication"
         android:icon="@mipmap/launcher_icon">
         <activity
@@ -56,6 +57,13 @@
                 <intent-filter>
                     <action android:name="com.clevertap.PT_PUSH_EVENT"/>
                 </intent-filter>
+        </service>
+        <service
+            android:name="com.clevertap.android.sdk.pushnotification.CTNotificationIntentService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.clevertap.PUSH_EVENT" />
+            </intent-filter>
         </service>
 
         <receiver

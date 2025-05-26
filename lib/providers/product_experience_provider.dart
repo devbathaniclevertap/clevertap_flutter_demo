@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clevertap_demo/models/product_icon_entity.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ProductExperienceProvider extends ChangeNotifier {
   ProductIconEntity? productIconEntity;
@@ -187,4 +188,191 @@ Clicked: $clicked""");
     }
     return null;
   }
+
+  final _cleverTapPlugin = CleverTapPlugin();
+  void activateCleverTapFlutterPluginHandlers() {
+    _cleverTapPlugin
+        .setCleverTapCustomTemplatePresentHandler(presentCustomTemplate);
+  }
+
+  BuildContext? _context;
+  GlobalKey? _icon0Key;
+  GlobalKey? _icon1Key;
+  late TutorialCoachMark tutorialCoachMark;
+  List<TargetFocus> targets = [];
+
+  void setContext(BuildContext context) {
+    _context = context;
+  }
+
+  void setTargetKeys(GlobalKey icon0, GlobalKey icon1) {
+    _icon0Key = icon0;
+    _icon1Key = icon1;
+  }
+
+  void showTutorial(String iconData0, String iconData1) {
+    if (_context == null || _icon0Key == null || _icon1Key == null) {
+      log("Context or keys not set");
+      return;
+    }
+
+    targets = [
+      TargetFocus(
+        identify: "Target 1",
+        keyTarget: _icon0Key,
+        alignSkip: Alignment.bottomRight,
+        enableOverlayTab: true,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            builder: (context, controller) {
+              return Container(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Quick Access',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      iconData0,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => controller.next(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.blue,
+                      ),
+                      child: Text('Next'),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      TargetFocus(
+        identify: "Target 2",
+        keyTarget: _icon1Key,
+        alignSkip: Alignment.bottomRight,
+        enableOverlayTab: true,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom, // Changed from top to bottom
+            builder: (context, controller) {
+              return Container(
+                padding: const EdgeInsets.all(16),
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.9,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Featured Items',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      iconData1,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () => controller.previous(),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.blue,
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Text('Previous'),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () => controller.skip(),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.blue,
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Text('Done'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    ];
+
+    tutorialCoachMark = TutorialCoachMark(
+      targets: targets,
+      colorShadow: Colors.black,
+      paddingFocus: 10,
+      opacityShadow: 0.8,
+      onFinish: () {
+        log("Tutorial finished");
+      },
+      onClickTarget: (target) {
+        log("Clicked on ${target.identify}");
+      },
+    )..show(context: _context!);
+  }
+
+  void presentCustomTemplate(String templateName) async {
+    log(templateName);
+    setCustomTemplatePresented(templateName);
+    String? icon0Data = await CleverTapPlugin.customTemplateGetStringArg(
+        templateName, 'icon_0');
+    String? icon1Data = await CleverTapPlugin.customTemplateGetStringArg(
+        templateName, 'icon_1');
+    log(icon0Data.toString());
+    log(icon1Data.toString());
+    if (icon0Data != null && icon1Data != null) {
+      showTutorial(icon0Data, icon1Data);
+    }
+  }
+
+  void setCustomTemplatePresented(String templateName) {
+    CleverTapPlugin.customTemplateSetPresented(templateName);
+  }
+
+  final GlobalKey icon_0 = GlobalKey();
+  final GlobalKey icon_1 = GlobalKey();
 }

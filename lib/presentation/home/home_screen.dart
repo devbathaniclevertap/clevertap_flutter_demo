@@ -37,8 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeProvider>().initDeepLinks(context);
-      // context.read<HomeProvider>().activateCleverTapFlutterPluginHandlers();
-      // context.read<HomeProvider>().showTutorial(context);
     });
 
     super.initState();
@@ -100,7 +98,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       SizedBox(height: 4),
                       CommonTextfield(
-                        globalKey: homeState.icon_0,
                         hintText: "Dev Bathani",
                         controller: homeState.nameController,
                       ),
@@ -124,7 +121,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       SizedBox(height: 4),
                       CommonTextfield(
-                        globalKey: homeState.icon_1,
                         hintText: "dev.bathani@clevertap.com",
                         controller: homeState.emailController,
                         textInputType: TextInputType.emailAddress,
@@ -268,7 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       } else if (homeState.selectedAction == "profilePush") {
                         homeState.profilePush();
                       } else if (homeState.selectedAction == "recordEvent") {
-                        homeState.recordEvent();
+                        homeState.recordEvent(context);
                       } else if (homeState.selectedAction == "profileSet") {
                         homeState.profileSet();
                       } else if (homeState.selectedAction == "getCleverTapId") {

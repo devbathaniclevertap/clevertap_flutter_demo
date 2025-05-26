@@ -11,68 +11,111 @@ class ProductExperienceScreen extends StatefulWidget {
 }
 
 class _ProductExperienceScreenState extends State<ProductExperienceScreen> {
+  // Add demo data
+  final List<Map<String, String>> demoItems = [
+    {
+      'title': 'Electronics',
+      'imageUrl': 'https://img.icons8.com/fluency/48/electronics.png',
+      'key': 'icon_0'
+    },
+    {
+      'title': 'Groceries',
+      'imageUrl': 'https://img.icons8.com/fluency/48/grocery-store.png',
+      'key': 'icon_1'
+    },
+    {
+      'title': 'Fashion',
+      'imageUrl': 'https://img.icons8.com/fluency/48/clothes.png',
+      'key': 'icon_2'
+    },
+    {
+      'title': 'Mobile',
+      'imageUrl': 'https://img.icons8.com/fluency/48/mobile-phone.png',
+      'key': 'icon_3'
+    },
+    {
+      'title': 'Books',
+      'imageUrl': 'https://img.icons8.com/fluency/48/books.png',
+      'key': 'icon_4'
+    },
+    {
+      'title': 'Sports',
+      'imageUrl': 'https://img.icons8.com/fluency/48/basketball.png',
+      'key': 'icon_5'
+    },
+  ];
+
+  // Map to store global keys
+  final Map<String, GlobalKey> itemKeys = {};
+
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((callback) {
-      context.read<ProductExperienceProvider>().getIconData();
-    });
     super.initState();
+    // Initialize global keys for each item
+    for (var item in demoItems) {
+      itemKeys[item['key']!] = GlobalKey();
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((callback) {
+      final provider = context.read<ProductExperienceProvider>();
+      provider.setContext(context);
+      // Pass the global keys to provider
+      provider.setTargetKeys(itemKeys['icon_0']!, itemKeys['icon_1']!);
+      provider.activateCleverTapFlutterPluginHandlers();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ProductExperienceProvider>(
       builder: (context, productState, _) {
-        final quickLinks =
-            productState.productIconEntity?.iconData.quickLinks ?? [];
         return Scaffold(
           appBar: AppBar(
             title: const Text('Quick Links'),
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: quickLinks.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 0.85,
-                    ),
-                    itemCount: quickLinks.length,
-                    itemBuilder: (context, index) {
-                      final item = quickLinks[index];
-                      return InkWell(
-                        onTap: () {
-                          productState.onButtonClick(item);
-                        },
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.network(
-                                item.imageUrl,
-                                width: 48,
-                                height: 48,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(Icons.broken_image, size: 48),
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              item.title,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                          ],
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 0.85,
+              ),
+              itemCount: demoItems.length,
+              itemBuilder: (context, index) {
+                final item = demoItems[index];
+                return InkWell(
+                  key: itemKeys[item['key']],
+                  onTap: () {
+                    // Handle tap with key
+                    print('Tapped: ${item['key']}');
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          item['imageUrl']!,
+                          width: 48,
+                          height: 48,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.broken_image, size: 48),
                         ),
-                      );
-                    },
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        item['title']!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ],
                   ),
+                );
+              },
+            ),
           ),
         );
       },

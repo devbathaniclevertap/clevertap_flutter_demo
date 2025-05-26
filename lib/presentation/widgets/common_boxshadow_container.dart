@@ -10,17 +10,20 @@ class CommonBoxshadowContainer extends StatelessWidget {
     this.onTap,
     this.color,
     this.shadowColor,
+    this.globalKey,
   });
   final double? height;
   final double? width;
   final Widget? child;
   final Color? color;
+  final GlobalKey? globalKey;
   final Color? shadowColor;
   final void Function()? onTap;
   @override
   Widget build(BuildContext context) {
     return CommonContainer(
       height: height ?? 48,
+      key: globalKey,
       width: width ?? MediaQuery.sizeOf(context).width,
       border: Border.all(color: Color(0xff0F1A28)),
       color: color ?? Colors.white,

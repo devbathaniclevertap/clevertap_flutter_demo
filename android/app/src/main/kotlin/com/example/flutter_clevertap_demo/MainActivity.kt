@@ -2,6 +2,9 @@ package com.example.flutter_clevertap_demo
 
 import android.Manifest
 import android.app.AlertDialog
+import android.app.NotificationManager
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -29,6 +32,7 @@ import org.json.JSONObject
 class MainActivity : FlutterActivity() {
     private val LOCATION_PERMISSION_REQUEST = 1001
     private val CHANNEL = "com.example.yourapp/method_channel"
+    private val CHANNELS = "custom_channel/notification"
     var ctGeofenceSettings = CTGeofenceSettings.Builder()
         .enableBackgroundLocationUpdates(true)//boolean to enable background location updates
         .build()
@@ -54,6 +58,21 @@ class MainActivity : FlutterActivity() {
         }
 
         Log.d("Android","In the MainApplication")
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNELS).setMethodCallHandler {
+                call, result ->
+            if (call.method == "cancelNotification") {
+                val notificationId = call.argument<Int>("notificationId") ?: -1
+                if (notificationId > -1) {
+                    val notifyMgr = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                    notifyMgr.cancel(notificationId)
+                    result.success(null)
+                } else {
+                    result.error("INVALID_ID", "Notification ID is invalid", null)
+                }
+            } else {
+                result.notImplemented()
+            }
+        }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
             .setMethodCallHandler { call, result ->
                 when (call.method) {
@@ -69,6 +88,16 @@ class MainActivity : FlutterActivity() {
                     else -> result.notImplemented()
                 }
             }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        var cleverTapDefaultInstance: CleverTapAPI? = null
+        cleverTapDefaultInstance = CleverTapAPI.getDefaultInstance(applicationContext)
+        // On Android 12 and above, inform the notification click to get the pushClickedPayloadReceived callback on dart side.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            cleverTapDefaultInstance?.pushNotificationClickedEvent(intent.extras)
+        }
     }
 
     private fun enableGeoFence() {

@@ -9,12 +9,15 @@ import 'package:clevertap_plugin/clevertap_plugin.dart';
 // import 'package:clevertap_signedcall_flutter/models/swipe_off_behaviour.dart';
 // import 'package:clevertap_signedcall_flutter/plugin/clevertap_signedcall_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_clevertap_demo/models/native_display_entity.dart';
 import 'package:flutter_clevertap_demo/models/test_native_display_entity.dart';
 import 'package:flutter_clevertap_demo/presentation/home/native_display_screen.dart';
+import 'package:flutter_clevertap_demo/providers/product_experience_provider.dart';
 import 'package:flutter_clevertap_demo/services/native_bridge.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+import 'package:provider/provider.dart';
 
 class HomeProvider with ChangeNotifier {
   TextEditingController nameController = TextEditingController();
@@ -103,7 +106,7 @@ class HomeProvider with ChangeNotifier {
   }
 
   //recordEvent
-  void recordEvent() async {
+  void recordEvent(BuildContext context) async {
     Map<String, dynamic> eventData = {};
     if (stuffController.text == "Product Viewed") {
       final random = math.Random();
@@ -122,7 +125,10 @@ class HomeProvider with ChangeNotifier {
       CleverTapPlugin.showInbox(styleConfig);
     }
     if (stuffController.text == "Nudges Event") {
-      activateCleverTapFlutterPluginHandlers();
+      if (context.mounted) {
+        Provider.of<ProductExperienceProvider>(context, listen: false)
+            .activateCleverTapFlutterPluginHandlers();
+      }
     }
   }
 
@@ -157,8 +163,37 @@ class HomeProvider with ChangeNotifier {
     log(
       "pushClickedPayloadReceived called with notification payload: $notificationPayload",
     );
+    handleIntentExtras(notificationPayload);
     // You may perform UI operation like redirecting the user to a specific page based on custom key-value pairs
     // passed in the notificationPayload. You may also perform non UI operation such as HTTP requests, IO with local storage etc.
+  }
+
+  void handleIntentExtras(Map<String, dynamic>? extras) {
+    if (extras != null) {
+      final String? actionId = extras['actionId'];
+      if (actionId != null) {
+        debugPrint('ACTION_ID: $actionId');
+
+        final bool autoCancel = extras['autoCancel'] ?? true;
+        final int notificationId = extras['notificationId'] ?? -1;
+
+        if (autoCancel && notificationId > -1) {
+          const platform = MethodChannel('custom_channel/notification');
+          try {
+            platform.invokeMethod('cancelNotification', {
+              'notificationId': notificationId,
+            });
+          } on PlatformException catch (e) {
+            debugPrint("Failed to cancel notification: ${e.message}");
+          }
+        }
+
+        Fluttertoast.showToast(
+          msg: "Action ID is: $actionId",
+          toastLength: Toast.LENGTH_SHORT,
+        );
+      }
+    }
   }
 
   void getNotificationPermission() async {
@@ -273,65 +308,8 @@ class HomeProvider with ChangeNotifier {
     }
   }
 
-  final _cleverTapPlugin = CleverTapPlugin();
+
   void handleDeepLink(Uri uri, BuildContext context) {
     log("The URL is $uri");
-  }
-
-  void activateCleverTapFlutterPluginHandlers() {
-    _cleverTapPlugin
-        .setCleverTapCustomTemplatePresentHandler(presentCustomTemplate);
-  }
-
-  void presentCustomTemplate(String templateName) async {
-    log(templateName);
-    setCustomTemplatePresented(templateName);
-    String? data = await CleverTapPlugin.customTemplateGetStringArg(
-        templateName, 'icon_0');
-    log(data!);
-  }
-
-  void setCustomTemplatePresented(String templateName) {
-    CleverTapPlugin.customTemplateSetPresented(templateName);
-  }
-
-  final GlobalKey icon_0 = GlobalKey();
-  final GlobalKey icon_1 = GlobalKey();
-  late TutorialCoachMark tutorialCoachMark;
-  List<TargetFocus> targets = [];
-  void showTutorial(BuildContext context) {
-    targets = [
-      TargetFocus(
-        identify: "Field 1",
-        keyTarget: icon_0,
-        contents: [
-          TargetContent(
-            child: Text(
-              "Enter your name here",
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          )
-        ],
-      ),
-      TargetFocus(
-        identify: "Field 2",
-        keyTarget: icon_1,
-        contents: [
-          TargetContent(
-            child: Text(
-              "Email goes here",
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          )
-        ],
-      ),
-    ];
-
-    tutorialCoachMark = TutorialCoachMark(targets: targets)
-      ..show(context: context);
   }
 }
