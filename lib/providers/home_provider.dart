@@ -13,11 +13,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_clevertap_demo/models/native_display_entity.dart';
 import 'package:flutter_clevertap_demo/models/test_native_display_entity.dart';
 import 'package:flutter_clevertap_demo/presentation/home/native_display_screen.dart';
-import 'package:flutter_clevertap_demo/providers/product_experience_provider.dart';
 import 'package:flutter_clevertap_demo/services/native_bridge.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
 
 class HomeProvider with ChangeNotifier {
   TextEditingController nameController = TextEditingController();
@@ -123,12 +121,6 @@ class HomeProvider with ChangeNotifier {
       };
       await Future.delayed(Duration(seconds: 3));
       CleverTapPlugin.showInbox(styleConfig);
-    }
-    if (stuffController.text == "Nudges Event") {
-      if (context.mounted) {
-        Provider.of<ProductExperienceProvider>(context, listen: false)
-            .activateCleverTapFlutterPluginHandlers();
-      }
     }
   }
 
@@ -307,7 +299,6 @@ class HomeProvider with ChangeNotifier {
       debugPrint('Deep link error: $e');
     }
   }
-
 
   void handleDeepLink(Uri uri, BuildContext context) {
     log("The URL is $uri");

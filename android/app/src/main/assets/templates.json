@@ -4,11 +4,11 @@
     "arguments": {
       "icon_0": {
         "type": "string",
-        "value": "Enter your name here"
+        "value": "Add value here"
       },
       "icon_1": {
         "type": "string",
-        "value": "Enter your email here"
+        "value": "Add value here"
       }
     }
   }

@@ -1,3 +1,4 @@
+import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clevertap_demo/providers/product_experience_provider.dart';
 import 'package:provider/provider.dart';
@@ -59,8 +60,8 @@ class _ProductExperienceScreenState extends State<ProductExperienceScreen> {
     WidgetsBinding.instance.addPostFrameCallback((callback) {
       final provider = context.read<ProductExperienceProvider>();
       provider.setContext(context);
-      // Pass the global keys to provider
       provider.setTargetKeys(itemKeys['icon_0']!, itemKeys['icon_1']!);
+      CleverTapPlugin.syncCustomTemplates();
       provider.activateCleverTapFlutterPluginHandlers();
     });
   }
@@ -71,7 +72,17 @@ class _ProductExperienceScreenState extends State<ProductExperienceScreen> {
       builder: (context, productState, _) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Quick Links'),
+            title: InkWell(
+              onTap: () async {
+                await CleverTapPlugin.recordEvent("Nudges Event", {});
+                await Future.delayed(
+                  Duration(seconds: 2),
+                );
+                productState.activateCleverTapFlutterPluginHandlers();
+                CleverTapPlugin.syncCustomTemplates();
+              },
+              child: const Text('Quick Links'),
+            ),
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -79,7 +90,7 @@ class _ProductExperienceScreenState extends State<ProductExperienceScreen> {
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
+                mainAxisSpacing: 5,
                 childAspectRatio: 0.85,
               ),
               itemCount: demoItems.length,

@@ -191,8 +191,11 @@ Clicked: $clicked""");
 
   final _cleverTapPlugin = CleverTapPlugin();
   void activateCleverTapFlutterPluginHandlers() {
+    print("In activateCleverTapFlutterPluginHandlers");
     _cleverTapPlugin
         .setCleverTapCustomTemplatePresentHandler(presentCustomTemplate);
+    _cleverTapPlugin
+        .setCleverTapCustomTemplateCloseHandler(closeCustomTemplate);
   }
 
   BuildContext? _context;
@@ -210,9 +213,9 @@ Clicked: $clicked""");
     _icon1Key = icon1;
   }
 
-  void showTutorial(String iconData0, String iconData1) {
+  void showTutorial(String iconData0, String iconData1, String templateName) {
     if (_context == null || _icon0Key == null || _icon1Key == null) {
-      log("Context or keys not set");
+      print("Context or keys not set");
       return;
     }
 
@@ -318,7 +321,10 @@ Clicked: $clicked""");
                         const SizedBox(width: 16),
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () => controller.skip(),
+                            onPressed: () {
+                              controller.skip();
+                              closeCustomTemplate(templateName);
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               foregroundColor: Colors.blue,
@@ -356,17 +362,22 @@ Clicked: $clicked""");
   }
 
   void presentCustomTemplate(String templateName) async {
-    log(templateName);
+    print("presentCustomTemplate $templateName");
     setCustomTemplatePresented(templateName);
     String? icon0Data = await CleverTapPlugin.customTemplateGetStringArg(
         templateName, 'icon_0');
     String? icon1Data = await CleverTapPlugin.customTemplateGetStringArg(
         templateName, 'icon_1');
-    log(icon0Data.toString());
-    log(icon1Data.toString());
+    print(icon0Data.toString());
+    print(icon1Data.toString());
     if (icon0Data != null && icon1Data != null) {
-      showTutorial(icon0Data, icon1Data);
+      showTutorial(icon0Data, icon1Data, templateName);
     }
+  }
+
+  void closeCustomTemplate(String templateName) async {
+    print("closeCustomTemplate $templateName");
+    CleverTapPlugin.customTemplateSetDismissed(templateName);
   }
 
   void setCustomTemplatePresented(String templateName) {
