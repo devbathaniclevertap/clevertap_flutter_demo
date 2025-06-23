@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_clevertap_demo/models/nudges_entity.dart';
 import 'package:flutter_clevertap_demo/models/product_icon_entity.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -198,159 +199,153 @@ Clicked: $clicked""");
         .setCleverTapCustomTemplateCloseHandler(closeCustomTemplate);
   }
 
+  // Remove old key declarations
   BuildContext? _context;
-  GlobalKey? _icon0Key;
-  GlobalKey? _icon1Key;
+  Map<String, GlobalKey> targetKeys = {};
   late TutorialCoachMark tutorialCoachMark;
   List<TargetFocus> targets = [];
+  List<NudgesEntity> nudgesEntity = [];
 
   void setContext(BuildContext context) {
     _context = context;
   }
 
-  void setTargetKeys(GlobalKey icon0, GlobalKey icon1) {
-    _icon0Key = icon0;
-    _icon1Key = icon1;
+  // Update to accept Map of keys
+  void setTargetKeys(Map<String, GlobalKey> keys) {
+    targetKeys = keys;
   }
 
-  void showTutorial(String iconData0, String iconData1, String templateName) {
-    if (_context == null || _icon0Key == null || _icon1Key == null) {
+  void presentCustomTemplate(String templateName) async {
+    print("presentCustomTemplate $templateName");
+    setCustomTemplatePresented(templateName);
+    String? iconData =
+        await CleverTapPlugin.customTemplateGetStringArg(templateName, 'data');
+    print("iconData : $iconData");
+
+    if (iconData != null) {
+      nudgesEntity = nudgesEntityFromJson(iconData);
+      // Show tutorial after parsing data
+      showTutorial(templateName);
+    }
+  }
+
+  void showTutorial(String templateName) {
+    if (_context == null || targetKeys.isEmpty) {
       print("Context or keys not set");
       return;
     }
 
-    targets = [
-      TargetFocus(
-        identify: "Target 1",
-        keyTarget: _icon0Key,
-        alignSkip: Alignment.bottomRight,
-        enableOverlayTab: true,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom,
-            builder: (context, controller) {
-              return Container(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Quick Access',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+    targets.clear();
+
+    // Create targets based on nudgesEntity data
+    for (var nudge in nudgesEntity) {
+      final key = nudge.key;
+      if (targetKeys.containsKey(key)) {
+        final currentIndex = nudgesEntity.indexOf(nudge);
+        final isFirst = currentIndex == 0;
+        final isLast = currentIndex == nudgesEntity.length - 1;
+
+        targets.add(
+          TargetFocus(
+            identify: key,
+            keyTarget: targetKeys[key]!,
+            alignSkip: Alignment.bottomRight,
+            enableOverlayTab: true,
+            contents: [
+              TargetContent(
+                align: ContentAlign.bottom,
+                builder: (context, controller) {
+                  return Container(
+                    padding: const EdgeInsets.all(16),
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.9,
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      iconData0,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => controller.next(),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.blue,
-                      ),
-                      child: Text('Next'),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      TargetFocus(
-        identify: "Target 2",
-        keyTarget: _icon1Key,
-        alignSkip: Alignment.bottomRight,
-        enableOverlayTab: true,
-        contents: [
-          TargetContent(
-            align: ContentAlign.bottom, // Changed from top to bottom
-            builder: (context, controller) {
-              return Container(
-                padding: const EdgeInsets.all(16),
-                constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * 0.9,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Featured Items',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      iconData1,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () => controller.previous(),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.blue,
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Text('Previous'),
+                        Text(
+                          'Quick Access',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              controller.skip();
-                              closeCustomTemplate(templateName);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.blue,
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                        const SizedBox(height: 8),
+                        Text(
+                          nudge.value,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            // Show Previous button for all except first item
+                            if (!isFirst) ...[
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () => controller.previous(),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: Colors.blue,
+                                    padding: EdgeInsets.symmetric(vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: Text('Previous'),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                            ],
+                            // Show Next/Done button
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if (isLast) {
+                                    controller.skip();
+                                    closeCustomTemplate(templateName);
+                                  } else {
+                                    controller.next();
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.blue,
+                                  padding: EdgeInsets.symmetric(vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                                child: Text(isLast ? 'Done' : 'Next'),
                               ),
                             ),
-                            child: Text('Done'),
-                          ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              );
-            },
+                  );
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-    ];
+        );
+      }
+    }
 
     tutorialCoachMark = TutorialCoachMark(
       targets: targets,
       colorShadow: Colors.black,
       paddingFocus: 10,
+      onSkip: () {
+        closeCustomTemplate(templateName);
+        CleverTapPlugin.customTemplateRunAction(
+            "Custom_Templates", "clickAction");
+        return true; // Return true to allow skipping
+      },
       opacityShadow: 0.8,
       onFinish: () {
         log("Tutorial finished");
@@ -359,20 +354,6 @@ Clicked: $clicked""");
         log("Clicked on ${target.identify}");
       },
     )..show(context: _context!);
-  }
-
-  void presentCustomTemplate(String templateName) async {
-    print("presentCustomTemplate $templateName");
-    setCustomTemplatePresented(templateName);
-    String? icon0Data = await CleverTapPlugin.customTemplateGetStringArg(
-        templateName, 'icon_0');
-    String? icon1Data = await CleverTapPlugin.customTemplateGetStringArg(
-        templateName, 'icon_1');
-    print(icon0Data.toString());
-    print(icon1Data.toString());
-    if (icon0Data != null && icon1Data != null) {
-      showTutorial(icon0Data, icon1Data, templateName);
-    }
   }
 
   void closeCustomTemplate(String templateName) async {

@@ -1,6 +1,10 @@
+import 'dart:async';
+
+import 'package:app_links/app_links.dart';
 import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clevertap_demo/presentation/product-experience/product_experience_screen.dart';
+import 'package:flutter_clevertap_demo/presentation/product/product_screen.dart';
 import 'package:flutter_clevertap_demo/presentation/widgets/common_boxshadow_container.dart';
 import 'package:flutter_clevertap_demo/presentation/widgets/common_textfield.dart';
 import 'package:flutter_clevertap_demo/presentation/widgets/native_view_builder.dart';
@@ -16,12 +20,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final _cleverTapPlugin = CleverTapPlugin();
+  StreamSubscription<Uri>? _linkSubscription;
 
   @override
   void initState() {
+    super.initState();
+
     CleverTapPlugin.initializeInbox();
     CleverTapPlugin.setDebugLevel(2);
-
+    initDeepLinks();
+    createNotificationChannel();
     _cleverTapPlugin.setCleverTapPushClickedPayloadReceivedHandler(
       context.read<HomeProvider>().pushClickedPayloadReceived,
     );
@@ -32,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     //         .onDisplayUnitsLoaded(displayUnitList, context);
     //   },
     // );
+
     _cleverTapPlugin.setCleverTapInboxMessagesDidUpdateHandler(
       context.read<HomeProvider>().inboxMessagesDidUpdate,
     );
@@ -42,18 +51,42 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
+  Future createNotificationChannel() async {
+    await CleverTapPlugin.createNotificationChannel(
+        "channelId", "channelName", "channelDescription", 1, true);
+  }
+
+  Future<void> initDeepLinks() async {
+    // Handle links
+    _linkSubscription = AppLinks().uriLinkStream.listen((uri) {
+      print('onAppLink: $uri');
+    });
+  }
+
+  @override
+  void dispose() {
+    _linkSubscription?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<HomeProvider>(
       builder: (context, homeState, _) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(
-              "Clevertap Flutter Demo",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            title: InkWell(
+              onTap: () async {
+                // Update ClerverTap profile with button data
+                await CleverTapPlugin.recordEvent("wishlist_items", {});
+              },
+              child: Text(
+                "Clevertap Flutter Demo",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             elevation: 2,
@@ -293,6 +326,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       } else if (homeState.selectedAction ==
                           "inboxDidInitialize") {
                         homeState.inboxDidInitialize();
+                      } else if (homeState.selectedAction == "viewProducts") {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ProductScreen(),
+                          ),
+                        );
                       }
                     },
                     color: Color(0xff6EC6A9),

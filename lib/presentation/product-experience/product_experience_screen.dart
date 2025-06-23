@@ -60,7 +60,7 @@ class _ProductExperienceScreenState extends State<ProductExperienceScreen> {
     WidgetsBinding.instance.addPostFrameCallback((callback) {
       final provider = context.read<ProductExperienceProvider>();
       provider.setContext(context);
-      provider.setTargetKeys(itemKeys['icon_0']!, itemKeys['icon_1']!);
+      provider.setTargetKeys(itemKeys); // Pass all keys at once
       CleverTapPlugin.syncCustomTemplates();
       provider.activateCleverTapFlutterPluginHandlers();
     });
@@ -97,7 +97,6 @@ class _ProductExperienceScreenState extends State<ProductExperienceScreen> {
               itemBuilder: (context, index) {
                 final item = demoItems[index];
                 return InkWell(
-                  key: itemKeys[item['key']],
                   onTap: () {
                     // Handle tap with key
                     print('Tapped: ${item['key']}');
@@ -106,6 +105,7 @@ class _ProductExperienceScreenState extends State<ProductExperienceScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ClipRRect(
+                        key: itemKeys[item['key']],
                         borderRadius: BorderRadius.circular(12),
                         child: Image.network(
                           item['imageUrl']!,

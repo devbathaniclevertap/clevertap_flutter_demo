@@ -38,7 +38,8 @@ class HomeProvider with ChangeNotifier {
     "getAppBoxData",
     "inboxDidInitialize",
     "makeACall",
-    "productExperience"
+    "productExperience",
+    "viewProducts"
   ];
 
   List<String> stuff = [];
@@ -90,17 +91,9 @@ class HomeProvider with ChangeNotifier {
   }
 
   //profileSet
-  void profileSet() {
-    var profile = {
-      if (nameController.text.isNotEmpty) 'Name': nameController.text,
-      if (identityController.text.isNotEmpty)
-        'Identity': identityController.text,
-      if (emailController.text.isNotEmpty) 'Email': emailController.text,
-      if (phoneNumberController.text.isNotEmpty)
-        'Phone': phoneNumberController.text,
-      if (stuff.isNotEmpty) 'customer_type': stuff,
-    };
-    CleverTapPlugin.profileSet(profile);
+  void profileSet() async {
+    // Remove Email from user properties
+    await CleverTapPlugin.profileRemoveValueForKey("Email");
   }
 
   //recordEvent
@@ -111,6 +104,31 @@ class HomeProvider with ChangeNotifier {
       final randomNumber =
           100 + random.nextInt(900); // 3-digit number (100-999)
       eventData = {"product_name": "Random_$randomNumber"};
+    }
+    if (stuffController.text == "AddToCart") {
+      eventData = {
+        "product_id": "123e",
+        "price": "3499",
+        "image_url":
+            "https://fastly.picsum.photos/id/935/200/300.jpg?hmac=XPPjHEBtYb6Y3-p1EjAP0RRB0bNlvqCs52VIysO7iH0"
+      };
+    }
+    if (stuffController.text == "ProductViewed") {
+      eventData = {
+        "product_id": "123b",
+        "price": "3499",
+        "image_url":
+            "https://fastly.picsum.photos/id/935/200/300.jpg?hmac=XPPjHEBtYb6Y3-p1EjAP0RRB0bNlvqCs52VIysO7iH0"
+      };
+    }
+
+    if (stuffController.text == "Charged") {
+      eventData = {
+        "product_id": "123b",
+        "price": "3499",
+        "image_url":
+            "https://fastly.picsum.photos/id/935/200/300.jpg?hmac=XPPjHEBtYb6Y3-p1EjAP0RRB0bNlvqCs52VIysO7iH0"
+      };
     }
     await CleverTapPlugin.recordEvent(stuffController.text, eventData);
     if (stuffController.text == "App Inbox Message") {

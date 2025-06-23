@@ -1,14 +1,13 @@
 {
-  "Nudges_Code_Template": {
+  "Custom_Templates": {
     "type": "template",
     "arguments": {
-      "icon_0": {
+      "data": {
         "type": "string",
         "value": "Add value here"
       },
-      "icon_1": {
-        "type": "string",
-        "value": "Add value here"
+      "clickAction": {
+        "type": "action"
       }
     }
   }

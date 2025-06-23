@@ -4,7 +4,7 @@ import CleverTapSDK
 import UserNotifications
 
 @main
-@objc class AppDelegate: FlutterAppDelegate {
+@objc class AppDelegate: FlutterAppDelegate, CleverTapURLDelegate {
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -14,6 +14,8 @@ import UserNotifications
         // Initialize CleverTap
         CleverTap.autoIntegrate()
         CleverTap.setDebugLevel(3)
+        CleverTap.sharedInstance()?.setUrlDelegate(self)
+
         
         // Request notification permission
         UNUserNotificationCenter.current().delegate = self
@@ -29,5 +31,15 @@ import UserNotifications
         )
         
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    }
+    
+    // MARK: - CleverTapURLDelegate
+    func shouldHandleCleverTap(_ url: URL?, for channel: CleverTapChannel) -> Bool {
+        if let url = url {
+            print("Handling URL: \(url) for channel: \(channel)")
+            // Add your deep link handling logic here
+            return true
+        }
+        return false
     }
 }
