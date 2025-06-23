@@ -37,6 +37,10 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:flutter-clevertap-demo.web.app</string>
+	</array>
 	<key>CleverTapAccountID</key>
 	<string>TEST-468-488-R47Z</string>
 	<key>CleverTapToken</key>

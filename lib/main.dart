@@ -1,7 +1,9 @@
+import 'package:app_links/app_links.dart';
 import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clevertap_demo/presentation/home/home_screen.dart';
+import 'package:flutter_clevertap_demo/presentation/product/product_screen.dart';
 import 'package:flutter_clevertap_demo/providers/providers.dart';
 import 'package:provider/provider.dart';
 
@@ -21,9 +23,21 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String notificationMessage = "No notification yet.";
+  final appLinks = AppLinks(); // AppLinks is singleton
+  void handleDeeplink() async {
+// Subscribe to all events (initial link and further)
+    appLinks.uriLinkStream.listen((uri) {
+      print("Deeplink : $uri");
+      if (uri.toString().contains("electronics")) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (_) => ProductScreen()));
+      }
+    });
+  }
 
   @override
   void initState() {
+    handleDeeplink();
     super.initState();
   }
 

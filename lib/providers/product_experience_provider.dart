@@ -13,6 +13,7 @@ class ProductExperienceProvider extends ChangeNotifier {
     CleverTapPlugin.defineVariables({"Icon Data": "Data"});
     await CleverTapPlugin.syncCustomTemplatesInProd(true);
     await CleverTapPlugin.fetchVariables();
+    await CleverTapPlugin.getVariables();
     CleverTapPlugin.getVariable('Icon Data').then(
       (variable) {
         try {
