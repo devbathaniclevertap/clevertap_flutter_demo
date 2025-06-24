@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
   void handleDeeplink() async {
 // Subscribe to all events (initial link and further)
     appLinks.uriLinkStream.listen((uri) {
-      log("Deeplink : $uri");
+      log("Deeplink : ${uri.toString()}");
       Fluttertoast.showToast(msg: "$uri");
       if (uri.toString().contains("electronics")) {
         Navigator.push(
