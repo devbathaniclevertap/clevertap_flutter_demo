@@ -5,12 +5,25 @@ import UserNotifications
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, CleverTapURLDelegate {
+
+    // 🔧 Declare the variables here
+    var flutterChannel: FlutterMethodChannel?
+    var pendingCleverTapUrl: String?
+
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         GeneratedPluginRegistrant.register(with: self)
-        
+        let controller = window?.rootViewController as! FlutterViewController
+        flutterChannel = FlutterMethodChannel(name: "clevertap_deeplink_channel", binaryMessenger: controller.binaryMessenger)
+
+        // If a deep link was received before the channel was ready
+        if let url = pendingCleverTapUrl {
+            flutterChannel?.invokeMethod("clevertapDeeplink", arguments: url)
+            pendingCleverTapUrl = nil
+        }
+
         // Initialize CleverTap
         CleverTap.autoIntegrate()
         CleverTap.setDebugLevel(3)
@@ -34,8 +47,15 @@ import UserNotifications
     
     func shouldHandleCleverTap(_ url: URL?, for channel: CleverTapChannel) -> Bool {
         if let url = url {
-            // Add your deep link handling logic here
-            return true
+            print("CleverTap Deeplink Received: \(url.absoluteString)")
+            
+            if flutterChannel != nil {
+                flutterChannel?.invokeMethod("clevertapDeeplink", arguments: url.absoluteString)
+            } else {
+                // Store until Flutter channel is ready
+                pendingCleverTapUrl = url.absoluteString
+            }
+            return false
         }
         return false
     }

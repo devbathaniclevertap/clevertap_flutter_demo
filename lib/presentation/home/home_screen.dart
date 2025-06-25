@@ -3,12 +3,14 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_clevertap_demo/presentation/product-experience/product_experience_screen.dart';
 import 'package:flutter_clevertap_demo/presentation/product/product_screen.dart';
 import 'package:flutter_clevertap_demo/presentation/widgets/common_boxshadow_container.dart';
 import 'package:flutter_clevertap_demo/presentation/widgets/common_textfield.dart';
 import 'package:flutter_clevertap_demo/presentation/widgets/native_view_builder.dart';
 import 'package:flutter_clevertap_demo/providers/home_provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -21,7 +23,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _cleverTapPlugin = CleverTapPlugin();
   StreamSubscription<Uri>? _linkSubscription;
-
+  static const platform = MethodChannel('clevertap_deeplink_channel');
   @override
   void initState() {
     super.initState();
@@ -40,7 +42,13 @@ class _HomeScreenState extends State<HomeScreen> {
     //         .onDisplayUnitsLoaded(displayUnitList, context);
     //   },
     // );
-
+    // Listen to native method calls
+    platform.setMethodCallHandler((call) async {
+      if (call.method == "clevertapDeeplink") {
+        final url = call.arguments as String;
+        handleDeeplinkFromNative(url);
+      }
+    });
     _cleverTapPlugin.setCleverTapInboxMessagesDidUpdateHandler(
       context.read<HomeProvider>().inboxMessagesDidUpdate,
     );
@@ -54,6 +62,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Future createNotificationChannel() async {
     await CleverTapPlugin.createNotificationChannel(
         "channelId", "channelName", "channelDescription", 1, true);
+  }
+
+  void handleDeeplinkFromNative(String url) {
+    print("CleverTap Native Deeplink: $url");
+    Fluttertoast.showToast(msg: "From Native: $url");
+    Navigator.push(context, MaterialPageRoute(builder: (_) => ProductScreen()));
   }
 
   Future<void> initDeepLinks() async {
