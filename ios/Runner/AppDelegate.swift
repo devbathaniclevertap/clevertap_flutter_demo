@@ -26,7 +26,7 @@ import UserNotifications
 
         // Initialize CleverTap
         CleverTap.autoIntegrate()
-        CleverTap.setDebugLevel(3)
+        CleverTap.setDebugLevel(4)
         CleverTap.sharedInstance()?.setUrlDelegate(self)
 
         // Request notification permission
@@ -59,4 +59,5 @@ import UserNotifications
         }
         return false
     }
+    
 }

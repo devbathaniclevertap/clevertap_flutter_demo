@@ -15,6 +15,7 @@ import 'package:flutter_clevertap_demo/models/test_native_display_entity.dart';
 import 'package:flutter_clevertap_demo/presentation/home/native_display_screen.dart';
 import 'package:flutter_clevertap_demo/services/native_bridge.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class HomeProvider with ChangeNotifier {
@@ -39,7 +40,8 @@ class HomeProvider with ChangeNotifier {
     "inboxDidInitialize",
     "makeACall",
     "productExperience",
-    "viewProducts"
+    "viewProducts",
+    "getLocationPermission",
   ];
 
   List<String> stuff = [];
@@ -68,11 +70,13 @@ class HomeProvider with ChangeNotifier {
       if (nameController.text.isNotEmpty) 'Name': nameController.text,
       if (identityController.text.isNotEmpty)
         'Identity': identityController.text,
-      if (emailController.text.isNotEmpty) 'Email': emailController.text,
+      if (emailController.text.isNotEmpty)
+        'Email': "${emailController.text}@gmail.com",
       if (phoneNumberController.text.isNotEmpty)
         'Phone': phoneNumberController.text,
       if (stuff.isNotEmpty) 'customer_type': stuff,
     };
+
     CleverTapPlugin.onUserLogin(profile);
   }
 
@@ -168,11 +172,11 @@ class HomeProvider with ChangeNotifier {
       true,
     );
   }
-
   void pushClickedPayloadReceived(Map<String, dynamic> notificationPayload) {
     log(
       "pushClickedPayloadReceived called with notification payload: $notificationPayload",
     );
+    Fluttertoast.showToast(msg: "Notification from the killed state");
     handleIntentExtras(notificationPayload);
     // You may perform UI operation like redirecting the user to a specific page based on custom key-value pairs
     // passed in the notificationPayload. You may also perform non UI operation such as HTTP requests, IO with local storage etc.
@@ -320,5 +324,34 @@ class HomeProvider with ChangeNotifier {
 
   void handleDeepLink(Uri uri, BuildContext context) {
     log("The URL is $uri");
+  }
+
+  // Request location permission and set location in CleverTap using Geolocator
+  Future<void> getLocationPermission() async {
+    try {
+      var statusWhenInUse = await Permission.locationWhenInUse.status;
+      if (!statusWhenInUse.isGranted) {
+        statusWhenInUse = await Permission.locationWhenInUse.request();
+      }
+      var statusAlways = await Permission.locationAlways.status;
+      if (!statusAlways.isGranted) {
+        statusAlways = await Permission.locationAlways.request();
+      }
+      if (statusWhenInUse.isGranted && statusAlways.isGranted) {
+        log("Location permission granted");
+        Fluttertoast.showToast(msg: "Location permission granted");
+        // Get current location using Geolocator
+        final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
+        CleverTapPlugin.setLocation(position.latitude, position.longitude);
+      } else {
+        log("Location permission denied or limited");
+        Fluttertoast.showToast(msg: "Location permission denied or limited");
+      }
+    } catch (e) {
+      log("Error requesting location permission: $e");
+      Fluttertoast.showToast(msg: "Error requesting location permission");
+    }
   }
 }

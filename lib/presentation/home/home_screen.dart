@@ -29,19 +29,20 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     CleverTapPlugin.initializeInbox();
-    CleverTapPlugin.setDebugLevel(2);
+    CleverTapPlugin.setDebugLevel(4);
+    CleverTapPlugin.enableDeviceNetworkInfoReporting(true);
     initDeepLinks();
     createNotificationChannel();
     _cleverTapPlugin.setCleverTapPushClickedPayloadReceivedHandler(
       context.read<HomeProvider>().pushClickedPayloadReceived,
     );
-    // _cleverTapPlugin.setCleverTapDisplayUnitsLoadedHandler(
-    //   (displayUnitList) {
-    //     context
-    //         .read<HomeProvider>()
-    //         .onDisplayUnitsLoaded(displayUnitList, context);
-    //   },
-    // );
+    _cleverTapPlugin.setCleverTapDisplayUnitsLoadedHandler(
+      (displayUnitList) {
+        context
+            .read<HomeProvider>()
+            .onDisplayUnitsLoaded(displayUnitList, context);
+      },
+    );
     // Listen to native method calls
     platform.setMethodCallHandler((call) async {
       if (call.method == "clevertapDeeplink") {
@@ -74,6 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Handle links
     _linkSubscription = AppLinks().uriLinkStream.listen((uri) {
       print('onAppLink: $uri');
+      Fluttertoast.showToast(msg: "URL : $uri");
     });
   }
 
@@ -92,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
             title: InkWell(
               onTap: () async {
                 // Update ClerverTap profile with button data
-                await CleverTapPlugin.recordEvent("wishlist_items", {});
+                await CleverTapPlugin.recordEvent("scratch card", {});
               },
               child: Text(
                 "Clevertap Flutter Demo",
@@ -340,6 +342,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       } else if (homeState.selectedAction ==
                           "inboxDidInitialize") {
                         homeState.inboxDidInitialize();
+                      } else if (homeState.selectedAction ==
+                          "getLocationPermission") {
+                        homeState.getLocationPermission();
                       } else if (homeState.selectedAction == "viewProducts") {
                         Navigator.push(
                           context,

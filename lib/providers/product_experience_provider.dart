@@ -4,20 +4,24 @@ import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clevertap_demo/models/nudges_entity.dart';
 import 'package:flutter_clevertap_demo/models/product_icon_entity.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ProductExperienceProvider extends ChangeNotifier {
   ProductIconEntity? productIconEntity;
 
   Future getIconData() async {
-    CleverTapPlugin.defineVariables({"Icon Data": "Data"});
-    await CleverTapPlugin.syncCustomTemplatesInProd(true);
+    CleverTapPlugin.defineVariables({"Testing Dev PE": "Data"});
+    print("object1");
+    await CleverTapPlugin.syncVariables();
+    print("object2");
     await CleverTapPlugin.fetchVariables();
-    await CleverTapPlugin.getVariables();
-    CleverTapPlugin.getVariable('Icon Data').then(
+    print("object3");
+    CleverTapPlugin.getVariable('Testing Dev PE').then(
       (variable) {
         try {
-          log("Raw Data: $variable");
+          print("Raw Data: $variable");
+          Fluttertoast.showToast(msg: "Raw Data: $variable");
           print("Raw Data: ${variable.runtimeType}");
           productIconEntity = productIconEntityFromJson(variable);
           notifyListeners();

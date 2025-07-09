@@ -48,7 +48,6 @@ class MainActivity : FlutterActivity() {
                 "tagged_view",
                 NativeViewFactory()
             )
-        enableGeoFence()
         val defaultInstance = CleverTapAPI.getDefaultInstance(this)
         defaultInstance?.let { ins ->
             Log.i("FIREBASE LOG", "setting object id to firebase : ${ins.cleverTapID}")
@@ -98,10 +97,6 @@ class MainActivity : FlutterActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             cleverTapDefaultInstance?.pushNotificationClickedEvent(intent.extras)
         }
-    }
-
-    private fun enableGeoFence() {
-        requestLocationPermissions()
     }
 
     private fun requestLocationPermissions() {

@@ -61,8 +61,9 @@ class _ProductExperienceScreenState extends State<ProductExperienceScreen> {
       final provider = context.read<ProductExperienceProvider>();
       provider.setContext(context);
       provider.setTargetKeys(itemKeys); // Pass all keys at once
-      CleverTapPlugin.syncCustomTemplates();
+      // CleverTapPlugin.syncCustomTemplates();
       provider.activateCleverTapFlutterPluginHandlers();
+      provider.getIconData();
     });
   }
 

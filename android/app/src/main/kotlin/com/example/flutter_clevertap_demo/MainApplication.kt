@@ -6,6 +6,7 @@ import com.clevertap.android.sdk.Application
 import com.clevertap.android.sdk.CleverTapAPI
 import com.clevertap.android.sdk.interfaces.NotificationHandler
 import com.clevertap.clevertap_plugin.ClevertapCustomTemplates
+import com.google.firebase.messaging.FirebaseMessagingService
 
 
 class MainApplication : Application() {
