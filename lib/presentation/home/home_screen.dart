@@ -93,8 +93,10 @@ class _HomeScreenState extends State<HomeScreen> {
           appBar: AppBar(
             title: InkWell(
               onTap: () async {
+                var profile = {'service_used': "account"};
                 // Update ClerverTap profile with button data
-                await CleverTapPlugin.recordEvent("scratch card", {});
+                await CleverTapPlugin.profileSet(profile);
+                // await CleverTapPlugin.recordEvent("hello", {});
               },
               child: Text(
                 "Clevertap Flutter Demo",

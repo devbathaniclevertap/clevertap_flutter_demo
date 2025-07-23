@@ -1,29 +1,68 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:clevertap_plugin/clevertap_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clevertap_demo/models/nudges_entity.dart';
 import 'package:flutter_clevertap_demo/models/product_icon_entity.dart';
+import 'package:flutter_clevertap_demo/presentation/widgets/logger.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ProductExperienceProvider extends ChangeNotifier {
   ProductIconEntity? productIconEntity;
-
+  // Add a field to store carousel images
+  List<String> bottomCarouselImages = [];
+  Map<String, dynamic>? menuOption; // Add this field
+  Map<String, dynamic>? serviceOption; // Add this field
+  List<String> menuOptionKeys = [];
+  List<String> serviceOptionKeys = [];
+  var variable = '';
   Future getIconData() async {
-    CleverTapPlugin.defineVariables({"Testing Dev PE": "Data"});
-    print("object1");
-    await CleverTapPlugin.syncVariables();
-    print("object2");
-    await CleverTapPlugin.fetchVariables();
-    print("object3");
-    CleverTapPlugin.getVariable('Testing Dev PE').then(
+    CleverTapPlugin.defineVariables(
+      {
+        "IDFC Bank": {
+          "ServicesOption": {
+            "Services":
+                "[{\"label\":\"Account Services\",\"subtitle\":\"Manage your account settings\",\"color\":\"#1976D2\",\"textColor\":\"#FFFFFF\"},{\"label\":\"Card Services\",\"subtitle\":\"Manage debit/credit cards\",\"color\":\"#388E3C\",\"textColor\":\"#FFFFFF\"},{\"label\":\"Cheque Services\",\"subtitle\":\"Request or track cheques\",\"color\":\"#FBC02D\",\"textColor\":\"#FFFFFF\"},{\"label\":\"Customer Support\",\"subtitle\":\"24x7 help and support\",\"color\":\"#D32F2F\",\"textColor\":\"#FFFFFF\"},{\"label\":\"Branch Locator\",\"subtitle\":\"Find a branch near you\",\"color\":\"#512DA8\",\"textColor\":\"#FFFFFF\"},{\"label\":\"Document Upload\",\"subtitle\":\"Upload KYC or other docs\",\"color\":\"#455A64\",\"textColor\":\"#FFFFFF\"}]"
+          },
+        }
+      },
+    );
+    CleverTapPlugin.syncVariables();
+    CleverTapPlugin.fetchVariables()
+        .then((success) => {print("fetchVariables result: $success")});
+    CleverTapPlugin.getVariable('IDFC Bank').then(
       (variable) {
         try {
-          print("Raw Data: $variable");
+          // Parse MenuOption
+          dynamic menuOptionRaw;
+          dynamic serviceOptionRaw;
+          if (variable is Map && variable['MenuOption'] != null) {
+            menuOptionRaw = variable['MenuOption'];
+          } else if (variable is String) {
+            final decoded = jsonDecode(variable);
+            menuOptionRaw = decoded['MenuOption'];
+          }
+          if (variable is Map && variable['ServicesOption'] != null) {
+            serviceOptionRaw = variable['ServicesOption'];
+          } else if (variable is String) {
+            final decoded = jsonDecode(variable);
+            serviceOptionRaw = decoded['ServicesOption'];
+          }
+          if (menuOptionRaw != null) {
+            menuOption = Map<String, dynamic>.from(menuOptionRaw);
+            serviceOption = Map<String, dynamic>.from(serviceOptionRaw);
+            logger.i(serviceOption!['Transactions'].runtimeType);
+            notifyListeners();
+            // Extract keys
+            menuOptionKeys = menuOption!.keys.toList();
+            serviceOptionKeys = serviceOption!.keys.toList();
+            logger.i("MenuOption keys: $menuOptionKeys");
+            logger.i("service keys: $serviceOptionKeys");
+            notifyListeners();
+          }
           Fluttertoast.showToast(msg: "Raw Data: $variable");
-          print("Raw Data: ${variable.runtimeType}");
-          productIconEntity = productIconEntityFromJson(variable);
           notifyListeners();
         } catch (e, stack) {
           log("Error parsing data: $e");

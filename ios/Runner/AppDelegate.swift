@@ -59,5 +59,4 @@ import UserNotifications
         }
         return false
     }
-    
 }

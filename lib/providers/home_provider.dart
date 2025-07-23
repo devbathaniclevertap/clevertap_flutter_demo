@@ -172,11 +172,13 @@ class HomeProvider with ChangeNotifier {
       true,
     );
   }
+
   void pushClickedPayloadReceived(Map<String, dynamic> notificationPayload) {
     log(
       "pushClickedPayloadReceived called with notification payload: $notificationPayload",
     );
-    Fluttertoast.showToast(msg: "Notification from the killed state");
+    Fluttertoast.showToast(
+        msg: "Notification from the killed state $notificationPayload");
     handleIntentExtras(notificationPayload);
     // You may perform UI operation like redirecting the user to a specific page based on custom key-value pairs
     // passed in the notificationPayload. You may also perform non UI operation such as HTTP requests, IO with local storage etc.

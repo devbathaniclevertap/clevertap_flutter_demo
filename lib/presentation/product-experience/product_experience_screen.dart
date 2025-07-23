@@ -1,4 +1,4 @@
-import 'package:clevertap_plugin/clevertap_plugin.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_clevertap_demo/providers/product_experience_provider.dart';
 import 'package:provider/provider.dart';
@@ -72,62 +72,35 @@ class _ProductExperienceScreenState extends State<ProductExperienceScreen> {
     return Consumer<ProductExperienceProvider>(
       builder: (context, productState, _) {
         return Scaffold(
-          appBar: AppBar(
-            title: InkWell(
-              onTap: () async {
-                await CleverTapPlugin.recordEvent("Nudges Event", {});
-                await Future.delayed(
-                  Duration(seconds: 2),
-                );
-                productState.activateCleverTapFlutterPluginHandlers();
-                CleverTapPlugin.syncCustomTemplates();
-              },
-              child: const Text('Quick Links'),
-            ),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 5,
-                childAspectRatio: 0.85,
-              ),
-              itemCount: demoItems.length,
-              itemBuilder: (context, index) {
-                final item = demoItems[index];
-                return InkWell(
-                  onTap: () {
-                    // Handle tap with key
-                    print('Tapped: ${item['key']}');
-                  },
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ClipRRect(
-                        key: itemKeys[item['key']],
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          item['imageUrl']!,
-                          width: 48,
-                          height: 48,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.broken_image, size: 48),
-                        ),
+          body: Center(
+            child: productState.bottomCarouselImages.isEmpty
+                ? SizedBox.shrink()
+                : Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: CarouselSlider.builder(
+                      itemCount: productState.bottomCarouselImages.length,
+                      itemBuilder: (context, index, realIdx) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            productState.bottomCarouselImages[index],
+                            height: 120,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.broken_image, size: 120),
+                          ),
+                        );
+                      },
+                      options: CarouselOptions(
+                        height: 120,
+                        viewportFraction: 1.0,
+                        autoPlay: true,
+                        enlargeCenterPage: false,
+                        enableInfiniteScroll: true,
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        item['title']!,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                    ],
+                    ),
                   ),
-                );
-              },
-            ),
           ),
         );
       },
